@@ -138,28 +138,28 @@ sub world_update {
 
       # Rocks fall down though empty space
       if($cell =~ /[*+]/ && $down eq ' ') {
-        say STDERR "DOWN";
+        # say STDERR "DOWN";
         $new_map->[$x][$y] = ' ';
         $new_map->[$x][$y-1] = '+';
       }
 
       # Rocks on rocks flow down to the right
       elsif($cell =~ /[*+]/ && $down =~ /[*+]/ && $right eq ' ' && $right_down eq ' ') {
-        say STDERR "rock-flow right";
+        # say STDERR "rock-flow right";
         $new_map->[$x][$y] = ' ';
         $new_map->[$x+1][$y-1] = '+';
       }
       
       # Rocks on rocks flow down to the left
       elsif($cell =~ /[*+]/ && $down =~ /[*+]/ && $left eq ' ' && $left_down eq ' ') {
-        say STDERR "rock-flow left";
+        # say STDERR "rock-flow left";
         $new_map->[$x][$y] = ' ';
         $new_map->[$x-1][$y-1] = '+';
       }
 
       # Rocks on lambdas flow down to the right
       elsif($cell =~ /[*+]/ && $down eq '\\' && $right eq ' ' && $right_down eq ' ') {
-        say STDERR "lambda-flow right";
+        # say STDERR "lambda-flow right";
         $new_map->[$x][$y] = ' ';
         $new_map->[$x+1][$y-1] = '+';
       }
