@@ -107,6 +107,7 @@ sub check_ending {
   my ($x, $y) = @$robot_loc;
   if($map->[$x][$y+1] eq '+') {
     say "YOU WERE CRUSHED";
+    say "Score: $world->{score}";
     exit;
   }
   # Flip the rocks back to stars
