@@ -3,3 +3,7 @@ To run web server:
   # From the project directory
   plackup lifter_http.psgi
 
+And then you can hit http://localhost:5000/?map=contest1.map
+
+I haven't gotten it to accept moves yet :)
+
