@@ -31,6 +31,30 @@ sub print_map {
   print "\n";
 }
 
+sub map_update {
+  my $map = shift;
+  my $new_map = [];
+  my $map_width = scalar @{$map->[0]};
+  my $map_height = scalar @{$map};
+  for(my $x = 0; $x < $map_width; $x++) {
+    for(my $y = 0; $y < $map_height; $y++) {
+      my $cell = $map->[$x][$y];
+      my $left = $map->[$x-1][$y] if $x > 0;
+      my $right = $map->[$x+1][$y] if $x < $map_width - 1;
+      my $down = $map->[$x][$y-1] if $y > 0;
+      my $up = $map->[$x][$y+1] if $y < $map_height - 1;
+      # Rocks fall down though empty space
+      if($cell eq '*' && $down = ' ') {
+        $new_map->[$x][$y] = ' ';
+        $new_map->[$x][$y-1] = '*';
+      } else {
+        # All other cases... cell remains!
+        $new_map->[$x][$y] = $cell;
+      }
+    }
+  }
+}
+
 print_map $map;
 
 
