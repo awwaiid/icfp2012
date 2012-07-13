@@ -18,4 +18,11 @@ Last test added was for successive rocks falling
 
 Back from lunch for a while now. Have switched to $world instead of $map. Going to now make a manager that will run AI bots.
 
+2012.07.13.15.41 - Mike
 
+Updated some tests
+ * fixed one that expected all successive rocks to fall on each update. only the bottom one does so there will be space between them
+ * added test after discovering an error with running contest3.map that caused the top row of the map to be lost after initial move
+ * contest10.map can't even be loaded but have yet to make a test for it
+
+currently just going through maps to find bugs
