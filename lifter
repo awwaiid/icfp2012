@@ -1,0 +1,18 @@
+#!/usr/bin/env perl
+
+use v5.10;
+use strict;
+use warnings;
+use File::Slurp;
+use Data::Dumper;
+
+my @raw_map;
+
+if(-f $ARGV[0]) {
+  @raw_map = map { [split //, $_] } read_file($ARGV[0], { chomp => 1 });
+} else {
+  @raw_map = map { [split //, $_] } read_file(\*STDIN, { chomp => 1 });
+}
+
+print "Map:\n" . Dumper(\@raw_map);
+
