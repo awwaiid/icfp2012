@@ -140,6 +140,14 @@ sub check_ending {
       ending        => 'CRUSHED',
     };
   }
+  if($world->{waterproof_step} >= $world->{waterproof}) {
+    return {
+      %$world,
+      partial_score => $world->{score},
+      bonus_score   => 0,
+      ending        => 'DROWN',
+    };
+  }
   # Flip the rocks back to stars
   $map = [
     map {
@@ -153,11 +161,24 @@ sub check_ending {
 }
 
 sub world_update {
-  my $world = shift;
-  my $map = $world->{map};
-  my $new_map = [];
+  my $world      = shift;
+  my $map        = $world->{map};
+  my $new_map    = [];
   my $map_height = scalar @{$map->[0]};
   my $map_width  = scalar @{$map};
+  
+  my $waterproof_step = $world->{waterproof_step};
+  my $flooding_step   = $world->{flooding_step};
+  my $water           = $world->{water};
+
+  # Update the water level
+  if($world->{flooding} > 0) {
+    $flooding_step++;
+    if($flooding_step > $world->{flooding}) {
+      $water++;
+      $flooding_step = 0;
+    }
+  }
 
   for(my $y = 0; $y < $map_height; $y++) {
     for(my $x = 0; $x < $map_width; $x++) {
@@ -206,10 +227,25 @@ sub world_update {
       # All other cases... cell remains!
       else {
         $new_map->[$x][$y] = $cell;
+
+        # Update robot drowning
+        if($cell eq 'R' && $world->{flooding} > 0) {
+          if($y < $world->{water}) {
+            $waterproof_step++;
+          } else {
+            $waterproof_step = 0;
+          }
+        }
       }
     }
   }
-  return { %$world, map => $new_map };
+  return {
+    %$world,
+    map             => $new_map,
+    water           => $water,
+    waterproof_step => $waterproof_step,
+    flooding_step   => $flooding_step,
+  };
 }
 
 sub robot_move {
