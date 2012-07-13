@@ -1,0 +1,25 @@
+#!/usr/bin/env perl
+
+use lib '../lib';
+use v5.10;
+use strict;
+use warnings;
+use Data::Dumper;
+use Lifter;
+use URI::Escape;
+
+my $map;
+my $input = shift @ARGV;
+my $map_string = uri_unescape($input);
+print $map_string;
+$map = Lifter::load_map_from_string($map_string);
+my $robot_loc = Lifter::get_robot_loc($map);
+my $move = 'R';
+
+($map, $robot_loc) = Lifter::robot_move($map, $robot_loc, $move);
+$map = Lifter::check_ending($map, $robot_loc);
+$map = Lifter::map_update($map);
+$map = Lifter::check_ending($map, $robot_loc);
+
+Lifter::print_map $map;
+
