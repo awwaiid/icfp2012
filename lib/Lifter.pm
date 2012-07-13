@@ -11,7 +11,9 @@ sub load_map_from_string {
   my $source = shift;
   my @raw_map;
 
-  @raw_map = map { [split //, $_] } $source;
+  my @lines = split /\n/, $source;
+  @lines = map { chomp } @lines;
+  @raw_map = map { [split //, $_] } @lines;
 
   my $height = scalar @raw_map;
 
