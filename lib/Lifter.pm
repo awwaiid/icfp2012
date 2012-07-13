@@ -291,6 +291,14 @@ sub robot_move {
       $new_loc = [$x-1, $y];
     }
   }
+  if($move eq 'A') {
+    print "You ABORT!\n";
+    print "Partial score: $score\n";
+    print "Bonus: " . ($lambda_count * 25) . "\n";
+    print "Total: " . ($score + $lambda_count * 25) . "\n";
+    exit;
+  }
+
   return {
     %$world,
     map           => $map,
