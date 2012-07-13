@@ -13,6 +13,7 @@ if (isset($_POST['next_move'])) {
 }
 
 if (isset($_GET['map'])) {
+    var_dump ($_GET['map']);
     generateMap(urldecode($_GET['map']));
     exit;
 }

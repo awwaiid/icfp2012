@@ -22,5 +22,5 @@ $world = Lifter::world_update($world);
 $world = Lifter::check_ending($world);
 
 Lifter::print_map $world;
-print $move;
+#print $move; 
 
