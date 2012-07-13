@@ -95,5 +95,80 @@ sub map_update {
   return $new_map;
 }
 
+sub robot_move {
+  my ($map, $robot_loc, $move) = @_;
+  my ($x, $y) = @$robot_loc;
+  my $new_loc = [@$robot_loc];
+  if($move eq 'U') {
+    if($map->[$x][$y+1] eq ' '
+      || $map->[$x][$y+1] eq '.'
+      || $map->[$x][$y+1] eq '\\'
+    ) {
+      $map->[$x][$y] = ' ';
+      $map->[$x][$y+1] = 'R';
+      $new_loc = [$x, $y+1];
+    }
+    if($map->[$x][$y+1] eq 'o') {
+      print "You win!\n";
+      exit;
+    }
+  }
+  if($move eq 'D') {
+    if($map->[$x][$y-1] eq ' '
+      || $map->[$x][$y-1] eq '.'
+      || $map->[$x][$y-1] eq '\\'
+    ) {
+      $map->[$x][$y] = ' ';
+      $map->[$x][$y-1] = 'R';
+      $new_loc = [$x, $y-1];
+    }
+    if($map->[$x][$y-1] eq 'o') {
+      print "You win!\n";
+      exit;
+    }
+  }
+  if($move eq 'R') {
+    if($map->[$x+1][$y] eq ' '
+      || $map->[$x+1][$y] eq '.'
+      || $map->[$x+1][$y] eq '\\'
+    ) {
+      $map->[$x][$y] = ' ';
+      $map->[$x+1][$y] = 'R';
+      $new_loc = [$x+1, $y];
+    }
+    if($map->[$x+1][$y] eq 'o') {
+      print "You win!\n";
+      exit;
+    }
+    if($map->[$x+1][$y] eq '*' && $map->[$x+2][$y] eq ' ') {
+      $map->[$x][$y] = ' ';
+      $map->[$x+1][$y] = 'R';
+      $map->[$x+2][$y] = '*';
+      $new_loc = [$x+1, $y];
+    }
+  }
+  if($move eq 'L') {
+    if($map->[$x-1][$y] eq ' '
+      || $map->[$x-1][$y] eq '.'
+      || $map->[$x-1][$y] eq '\\'
+    ) {
+      $map->[$x][$y] = ' ';
+      $map->[$x-1][$y] = 'R';
+      $new_loc = [$x-1, $y];
+    }
+    if($map->[$x-1][$y] eq 'o') {
+      print "You win!\n";
+      exit;
+    }
+    if($map->[$x-1][$y] eq '*' && $map->[$x-2][$y] eq ' ') {
+      $map->[$x][$y] = ' ';
+      $map->[$x-1][$y] = 'R';
+      $map->[$x-2][$y] = '*';
+      $new_loc = [$x-1, $y];
+    }
+  }
+  return ($map, $new_loc);
+}
+
 1;
 
