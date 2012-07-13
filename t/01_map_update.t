@@ -16,9 +16,9 @@ use Data::Printer;
 
     my $no_change_map = `cat t/test_maps/no_change.map`;
 
-    my $new_map = Lifter::map_to_string( Lifter::map_update( Lifter::load_map( $no_change_map_path ) ) ); 
+    my $new_world = Lifter::world_update( Lifter::load_world( $no_change_map_path ) );
 
-    is $new_map, $no_change_map, "Map stayed the same";
+    is Lifter::map_to_string($new_world->{map}), $no_change_map, "Map stayed the same";
 }
 
 ## Test map that should only change once
@@ -29,13 +29,13 @@ use Data::Printer;
 
     my $expected_map = `cat t/test_maps/single_change_final.map`;
 
-    my $new_map = Lifter::map_update( Lifter::load_map( $map_path ) ); 
+    my $new_world = Lifter::world_update( Lifter::load_world( $map_path ) ); 
 
-    is Lifter::map_to_string($new_map), $expected_map, "Map updated as expected";
+    is Lifter::map_to_string($new_world->{map}), $expected_map, "Map updated as expected";
 
-    $new_map = Lifter::map_update( $new_map );
+    $new_world = Lifter::world_update( $new_world );
 
-    is Lifter::map_to_string($new_map), $expected_map, "Map not updated second run";
+    is Lifter::map_to_string($new_world->{map}), $expected_map, "Map not updated second run";
 }
 
 ## Test rock fall to side
@@ -46,9 +46,9 @@ use Data::Printer;
 
     my $expected_map = `cat t/test_maps/side_fall_final.map`;
 
-    my $new_map = Lifter::map_update( Lifter::load_map( $map_path ) ); 
+    my $new_world = Lifter::world_update( Lifter::load_world( $map_path ) ); 
 
-    is Lifter::map_to_string($new_map), $expected_map, "Map updated as expected";
+    is Lifter::map_to_string($new_world->{map}), $expected_map, "Map updated as expected";
 
 }
 
@@ -60,9 +60,9 @@ use Data::Printer;
 
     my $expected_map = `cat t/test_maps/lambda_fall_final.map`;
 
-    my $new_map = Lifter::map_update( Lifter::load_map( $map_path ) ); 
+    my $new_world = Lifter::world_update( Lifter::load_world( $map_path ) ); 
 
-    is Lifter::map_to_string($new_map), $expected_map, "Map updated as expected";
+    is Lifter::map_to_string($new_world->{map}), $expected_map, "Map updated as expected";
 
 }
 
@@ -74,9 +74,9 @@ use Data::Printer;
 
     my $expected_map = `cat t/test_maps/lambda_not_fall_final.map`;
 
-    my $new_map = Lifter::map_update( Lifter::load_map( $map_path ) ); 
+    my $new_world = Lifter::world_update( Lifter::load_world( $map_path ) ); 
 
-    is Lifter::map_to_string($new_map), $expected_map, "Map updated as expected";
+    is Lifter::map_to_string($new_world->{map}), $expected_map, "Map updated as expected";
 
 }
 
@@ -88,9 +88,9 @@ use Data::Printer;
 
     my $expected_map = `cat t/test_maps/successive_rock_final.map`;
 
-    my $new_map = Lifter::map_update( Lifter::load_map( $map_path ) ); 
+    my $new_world = Lifter::world_update( Lifter::load_world( $map_path ) ); 
 
-    is Lifter::map_to_string($new_map), $expected_map, "Map updated as expected";
+    is Lifter::map_to_string($new_world->{map}), $expected_map, "Map updated as expected";
 }
 
 ## Test off by one error
