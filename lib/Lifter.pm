@@ -370,6 +370,7 @@ sub robot_move {
     }
   }
   if($move eq 'A') {
+    $score++; # give it back!
     return {
       %$world,
       ending        => 'ABORT',
