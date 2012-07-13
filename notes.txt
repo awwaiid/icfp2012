@@ -7,3 +7,9 @@ And then you can hit http://localhost:5000/?map=contest1.map
 
 I haven't gotten it to accept moves yet :)
 
+------
+
+# Run the random bot on contest1.map
+./manager bot/random.pl map/contest1.map
+
+
