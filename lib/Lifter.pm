@@ -125,8 +125,9 @@ sub world_update {
   my $world = shift;
   my $map = $world->{map};
   my $new_map = [];
-  my $map_width = scalar @{$map->[0]};
-  my $map_height = scalar @{$map};
+  my $map_height = scalar @{$map->[0]};
+  my $map_width  = scalar @{$map};
+
   for(my $y = 0; $y < $map_height; $y++) {
     for(my $x = 0; $x < $map_width; $x++) {
 
