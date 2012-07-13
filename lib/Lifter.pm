@@ -53,13 +53,15 @@ sub load_world {
   my $robot_loc = get_robot_loc($map);
   my $lambda_remain = get_lambda_remain($map);
   return {
-    map           => $map,
-    robot_loc     => $robot_loc,
-    lambda_remain => $lambda_remain,
-    lambda_count  => 0, # How many we've already gotten
-    partial_score => 0,
-    bonus_score   => 0,
-    score         => 0,
+    map             => $map, # array of map data
+    robot_loc       => $robot_loc, # [$x,$y] of robot
+    lambda_remain   => $lambda_remain, # How many lambdas left
+    lambda_count    => 0, # How many we've already gotten
+    partial_score   => 0, # The pre-bonus score
+    bonus_score     => 0, # The bonus for WIN or ABORT
+    score           => 0, # The total (current/ending) score
+    flooding_step   => 0, # How deep is the flood
+    waterproof_step => 0, # How long have we been underwater
     %$meta,
   };
 }
