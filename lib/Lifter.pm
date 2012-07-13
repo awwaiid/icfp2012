@@ -370,11 +370,13 @@ sub robot_move {
     }
   }
   if($move eq 'A') {
-    print "You ABORT!\n";
-    print "Partial score: $score\n";
-    print "Bonus: " . ($lambda_count * 25) . "\n";
-    print "Total: " . ($score + $lambda_count * 25) . "\n";
-    exit;
+    return {
+      %$world,
+      ending        => 'ABORT',
+      partial_score => $score,
+      bonus_score   => $lambda_count * 25,
+      score         => $score + $lambda_count * 25,
+    };
   }
 
   return {
