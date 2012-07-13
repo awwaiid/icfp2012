@@ -1,0 +1,10 @@
+2012.07.13.12.01 - Brock
+
+Been working on this for a while. We have a perl tool that will slurp in maps, prompt for moves, and update the world. It doesn't keep track of score, and you can't yet win (only die).
+
+Mike has built some tests to validate some of the physics. Jason is thinking about how to do some more interesting visualisations of this. I set up a JSON-HTTP server to send out map state and take in moves.
+
+I'm now going to convert to a more central 'world' data structure, which will contain the map, current robot position, lambda count, etc. Then we'd just pass this one variable around. Mike is going to update the HTTP interface to get parity with the interactive command line one.
+
+... and I'm getting hungry!
+
