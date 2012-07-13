@@ -13,13 +13,20 @@ sub load_map {
   my @raw_map;
 
   my @lines;
+  my $all_lines;
   if(ref $source || ($source !~ /\n/ && -f $source)) {
-    @lines = read_file($source, { chomp => 1 });
+    $all_lines = read_file($source, { chomp => 1 });
   } else {
     # Try to treat this as a map directly
-    @lines = split /\n/, $source;
-    @lines = map { chomp; $_ } @lines;
+    $all_lines = $source;
   }
+
+  my ($map_lines, $meta_lines) = split /\n\n/, $all_lines, 2;
+  $meta_lines ||= '';
+
+  @lines = split /\n/, $map_lines;
+  @lines = map { chomp; $_ } @lines;
+
   my $width = max( map { length $_ } @lines );
   @raw_map = map { [split //, $_] } @lines;
 
@@ -32,12 +39,17 @@ sub load_map {
       $map->[$x][$height - $y - 1] = $raw_map[$y]->[$x] || ' ';
     }
   }
-  return $map;
+
+  my @meta_lines = split /\n/, $meta_lines;
+  @meta_lines = map { chomp; $_ } @meta_lines;
+  my %meta = map { my ($k, $v) = split / /, $_; (lc $k, $v) } @meta_lines;
+
+  return ($map, \%meta);
 }
 
 sub load_world {
   my $source = shift;
-  my $map = load_map($source);
+  my ($map, $meta) = load_map($source);
   my $robot_loc = get_robot_loc($map);
   my $lambda_remain = get_lambda_remain($map);
   return {
@@ -48,6 +60,7 @@ sub load_world {
     partial_score => 0,
     bonus_score   => 0,
     score         => 0,
+    %$meta,
   };
 }
 
