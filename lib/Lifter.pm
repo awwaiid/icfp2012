@@ -62,6 +62,9 @@ sub load_world {
     score           => 0, # The total (current/ending) score
     flooding_step   => 0, # How deep is the flood
     waterproof_step => 0, # How long have we been underwater
+    water           => 0, # default water level
+    flooding        => 0, # default flooding rate
+    waterproof      => 10,# default waterproofing
     %$meta,
   };
 }
