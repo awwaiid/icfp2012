@@ -11,6 +11,7 @@ if(-f $ARGV[0]) {
   my $world = Lifter::load_world(shift @ARGV);
   while(1) {
     Lifter::print_map $world;
+    say "Score: $world->{score}";
     print "Enter move: ";
     my $move = <>;
     chomp $move;

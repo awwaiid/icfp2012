@@ -29,11 +29,13 @@ sub load_world {
   my $source = shift;
   my $map = load_map($source);
   my $robot_loc = get_robot_loc($map);
-  my $lambda_count = get_lambda_count($map);
+  my $lambda_remain = get_lambda_remain($map);
   return {
-    map          => $map,
-    robot_loc    => $robot_loc,
-    lambda_count => $lambda_count,
+    map           => $map,
+    robot_loc     => $robot_loc,
+    lambda_remain => $lambda_remain,
+    lambda_count  => 0, # How many we've already gotten
+    score         => 0,
   };
 }
 
@@ -83,7 +85,7 @@ sub get_robot_loc {
   }
 }
 
-sub get_lambda_count {
+sub get_lambda_remain {
   my $map = shift;
 
   my $width = scalar @$map;
@@ -165,7 +167,7 @@ sub world_update {
       }
 
       # Time to open the lift!!!
-      elsif($cell eq 'L' && $world->{lambda_count} == 0) {
+      elsif($cell eq 'L' && $world->{lambda_remain} == 0) {
         $new_map->[$x][$y] = 'O';
       }
       
@@ -182,7 +184,9 @@ sub robot_move {
   my ($world, $move) = @_;
   my $map = dclone($world->{map});
   my $robot_loc = $world->{robot_loc};
+  my $lambda_remain = $world->{lambda_remain};
   my $lambda_count = $world->{lambda_count};
+  my $score = $world->{score} - 1; # Lose one point!
   $move = uc $move;
   my ($x, $y) = @$robot_loc;
   my $new_loc = [@$robot_loc];
@@ -191,13 +195,20 @@ sub robot_move {
       || $map->[$x][$y+1] eq '.'
       || $map->[$x][$y+1] eq '\\'
     ) {
-      $lambda_count-- if $map->[$x][$y+1] eq '\\';
+      if($map->[$x][$y+1] eq '\\') {
+        $lambda_remain-- ;
+        $lambda_count++ ;
+        $score += 25 ;
+      }
       $map->[$x][$y] = ' ';
       $map->[$x][$y+1] = 'R';
       $new_loc = [$x, $y+1];
     }
     if($map->[$x][$y+1] eq 'O') {
       print "You win!\n";
+      print "Partial score: $score\n";
+      print "Bonus: " . ($lambda_count * 50) . "\n";
+      print "Total: " . ($score + $lambda_count * 50) . "\n";
       exit;
     }
   }
@@ -206,13 +217,20 @@ sub robot_move {
       || $map->[$x][$y-1] eq '.'
       || $map->[$x][$y-1] eq '\\'
     ) {
-      $lambda_count-- if $map->[$x][$y-1] eq '\\';
+      if($map->[$x][$y-1] eq '\\') {
+        $lambda_remain-- ;
+        $lambda_count++ ;
+        $score += 25 ;
+      }
       $map->[$x][$y] = ' ';
       $map->[$x][$y-1] = 'R';
       $new_loc = [$x, $y-1];
     }
     if($map->[$x][$y-1] eq 'O') {
       print "You win!\n";
+      print "Partial score: $score\n";
+      print "Bonus: " . ($lambda_count * 50) . "\n";
+      print "Total: " . ($score + $lambda_count * 50) . "\n";
       exit;
     }
   }
@@ -221,13 +239,20 @@ sub robot_move {
       || $map->[$x+1][$y] eq '.'
       || $map->[$x+1][$y] eq '\\'
     ) {
-      $lambda_count-- if $map->[$x+1][$y] eq '\\';
+      if($map->[$x+1][$y] eq '\\') {
+        $lambda_remain-- ;
+        $lambda_count++ ;
+        $score += 25 ;
+      }
       $map->[$x][$y] = ' ';
       $map->[$x+1][$y] = 'R';
       $new_loc = [$x+1, $y];
     }
     if($map->[$x+1][$y] eq 'O') {
       print "You win!\n";
+      print "Partial score: $score\n";
+      print "Bonus: " . ($lambda_count * 50) . "\n";
+      print "Total: " . ($score + $lambda_count * 50) . "\n";
       exit;
     }
     if($map->[$x+1][$y] =~ /[*+]/ && $map->[$x+2][$y] eq ' ') {
@@ -242,13 +267,20 @@ sub robot_move {
       || $map->[$x-1][$y] eq '.'
       || $map->[$x-1][$y] eq '\\'
     ) {
-      $lambda_count-- if $map->[$x-1][$y] eq '\\';
+      if($map->[$x-1][$y] eq '\\') {
+        $lambda_remain-- ;
+        $lambda_count++ ;
+        $score += 25 ;
+      }
       $map->[$x][$y] = ' ';
       $map->[$x-1][$y] = 'R';
       $new_loc = [$x-1, $y];
     }
     if($map->[$x-1][$y] eq 'O') {
       print "You win!\n";
+      print "Partial score: $score\n";
+      print "Bonus: " . ($lambda_count * 50) . "\n";
+      print "Total: " . ($score + $lambda_count * 50) . "\n";
       exit;
     }
     if($map->[$x-1][$y] =~ /[*+]/ && $map->[$x-2][$y] eq ' ') {
@@ -260,9 +292,11 @@ sub robot_move {
   }
   return {
     %$world,
-    map          => $map,
-    robot_loc    => $new_loc,
-    lambda_count => $lambda_count
+    map           => $map,
+    robot_loc     => $new_loc,
+    lambda_remain => $lambda_remain,
+    lambda_count  => $lambda_count,
+    score         => $score,
   };
 }
 
