@@ -71,13 +71,9 @@ $map_string = "
 $state = '{"score":0, "lambda_count":0,"robot_loc":[2,5], "lambda_remain":7}';
 
 ?>
-
 <html>
-
 <head>
-
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
-
 <script>
 
 function up() {
@@ -116,6 +112,29 @@ function sendMove(move, map) {
     return false;
 }
 
+
+$(document).keydown(function(e){
+    if (e.keyCode == 37) {
+        alert("left pressed");
+        left();
+        return false;
+    }
+    if (e.keyCode == 38) {
+        alert("up pressed");
+        up();
+        return false;
+    }
+    if (e.keyCode == 39) {
+        alert("right pressed");
+        right();
+        return false;
+    }
+    if (e.keyCode == 40) {
+        alert("down pressed");
+        down();
+        return false;
+    }
+});
 
 </script>
 
