@@ -1,0 +1,5 @@
+To run web server:
+
+  # From the project directory
+  plackup lifter_http.psgi
+
