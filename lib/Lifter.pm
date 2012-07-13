@@ -7,31 +7,19 @@ use File::Slurp;
 use Storable qw( dclone );
 use JSON::XS;
 
-sub load_map_from_string {
-  my $source = shift;
-  my @raw_map;
-
-  my @lines = split /\n/, $source;
-  @lines = map { chomp } @lines;
-  @raw_map = map { [split //, $_] } @lines;
-
-  my $height = scalar @raw_map;
-
-  my $map = [];
-  for(my $y = 0; $y < @raw_map; $y++) {
-    my $row = $raw_map[$y];
-    for(my $x = 0; $x < @$row; $x++) {
-      $map->[$x][$height - $y - 1] = $raw_map[$y]->[$x];
-    }
-  }
-  return $map;
-}
-
 sub load_map {
   my $source = shift;
   my @raw_map;
 
-  @raw_map = map { [split //, $_] } read_file($source, { chomp => 1 });
+  my @lines;
+  if(ref $source || ($source !~ /\n/ && -f $source)) {
+    @lines = read_file($source, { chomp => 1 });
+  } else {
+    # Try to treat this as a map directly
+    @lines = split /\n/, $source;
+    @lines = map { chomp; $_ } @lines;
+  }
+  @raw_map = map { [split //, $_] } @lines;
 
   my $height = scalar @raw_map;
 
