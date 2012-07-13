@@ -123,7 +123,6 @@ sub check_ending {
       ending        => 'CRUSHED',
     };
   }
-  say p($map);
   # Flip the rocks back to stars
   $map = [
     map {
