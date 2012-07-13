@@ -3,7 +3,7 @@
 use strict;
 
 use v5.10;
-use Test::More tests => 13;
+use Test::More tests => 15;
 use lib 'lib';
 use Lifter;
 use Data::Printer;
@@ -42,7 +42,7 @@ use Data::Printer;
 
 {
     my $map_path = 't/test_maps/side_fall.map';
-    ok -e $map_path, "Single change map found";
+    ok -e $map_path, "Rock fall to side map found";
 
     my $expected_map = `cat t/test_maps/side_fall_final.map`;
 
@@ -56,7 +56,7 @@ use Data::Printer;
 
 {
     my $map_path = 't/test_maps/lambda_fall.map';
-    ok -e $map_path, "Single change map found";
+    ok -e $map_path, "Rock fall to side of lambda map found";
 
     my $expected_map = `cat t/test_maps/lambda_fall_final.map`;
 
@@ -66,11 +66,11 @@ use Data::Printer;
 
 }
 
-## Test rock fall to side of lambda
+## Test rock not falling to side of lambda
 
 {
     my $map_path = 't/test_maps/lambda_not_fall.map';
-    ok -e $map_path, "Single change map found";
+    ok -e $map_path, "Rock not falling to lambda side map found";
 
     my $expected_map = `cat t/test_maps/lambda_not_fall_final.map`;
 
@@ -84,11 +84,25 @@ use Data::Printer;
 
 {
     my $map_path = 't/test_maps/successive_rock.map';
-    ok -e $map_path, "Single change map found";
+    ok -e $map_path, "Successive rock fall map found";
 
     my $expected_map = `cat t/test_maps/successive_rock_final.map`;
 
     my $new_map = Lifter::map_update( Lifter::load_map( $map_path ) ); 
+
+    is Lifter::map_to_string($new_map), $expected_map, "Map updated as expected";
+}
+
+## Test off by one error
+
+{
+    my $map_path = 't/test_maps/off_by_one.map';
+    ok -e $map_path, "Off by one error map found";
+
+    my $expected_map = `cat t/test_maps/off_by_one_final.map`;
+
+    my $loaded_map = Lifter::load_map( $map_path );
+    my $new_map = Lifter::map_update( Lifter::robot_move( $loaded_map, Lifter::get_robot_loc( $loaded_map ), 'L' )  ); 
 
     is Lifter::map_to_string($new_map), $expected_map, "Map updated as expected";
 }
