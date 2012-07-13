@@ -163,6 +163,11 @@ sub world_update {
         $new_map->[$x][$y] = ' ';
         $new_map->[$x+1][$y-1] = '+';
       }
+
+      # Time to open the lift!!!
+      elsif($cell eq 'L' && $world->{lambda_count} == 0) {
+        $new_map->[$x][$y] = 'O';
+      }
       
       # All other cases... cell remains!
       else {
@@ -177,6 +182,7 @@ sub robot_move {
   my ($world, $move) = @_;
   my $map = dclone($world->{map});
   my $robot_loc = $world->{robot_loc};
+  my $lambda_count = $world->{lambda_count};
   $move = uc $move;
   my ($x, $y) = @$robot_loc;
   my $new_loc = [@$robot_loc];
@@ -185,11 +191,12 @@ sub robot_move {
       || $map->[$x][$y+1] eq '.'
       || $map->[$x][$y+1] eq '\\'
     ) {
+      $lambda_count-- if $map->[$x][$y+1] eq '\\';
       $map->[$x][$y] = ' ';
       $map->[$x][$y+1] = 'R';
       $new_loc = [$x, $y+1];
     }
-    if($map->[$x][$y+1] eq 'o') {
+    if($map->[$x][$y+1] eq 'O') {
       print "You win!\n";
       exit;
     }
@@ -199,11 +206,12 @@ sub robot_move {
       || $map->[$x][$y-1] eq '.'
       || $map->[$x][$y-1] eq '\\'
     ) {
+      $lambda_count-- if $map->[$x][$y-1] eq '\\';
       $map->[$x][$y] = ' ';
       $map->[$x][$y-1] = 'R';
       $new_loc = [$x, $y-1];
     }
-    if($map->[$x][$y-1] eq 'o') {
+    if($map->[$x][$y-1] eq 'O') {
       print "You win!\n";
       exit;
     }
@@ -213,11 +221,12 @@ sub robot_move {
       || $map->[$x+1][$y] eq '.'
       || $map->[$x+1][$y] eq '\\'
     ) {
+      $lambda_count-- if $map->[$x+1][$y] eq '\\';
       $map->[$x][$y] = ' ';
       $map->[$x+1][$y] = 'R';
       $new_loc = [$x+1, $y];
     }
-    if($map->[$x+1][$y] eq 'o') {
+    if($map->[$x+1][$y] eq 'O') {
       print "You win!\n";
       exit;
     }
@@ -233,11 +242,12 @@ sub robot_move {
       || $map->[$x-1][$y] eq '.'
       || $map->[$x-1][$y] eq '\\'
     ) {
+      $lambda_count-- if $map->[$x-1][$y] eq '\\';
       $map->[$x][$y] = ' ';
       $map->[$x-1][$y] = 'R';
       $new_loc = [$x-1, $y];
     }
-    if($map->[$x-1][$y] eq 'o') {
+    if($map->[$x-1][$y] eq 'O') {
       print "You win!\n";
       exit;
     }
@@ -248,7 +258,12 @@ sub robot_move {
       $new_loc = [$x-1, $y];
     }
   }
-  return { %$world, map => $map, robot_loc => $new_loc };
+  return {
+    %$world,
+    map          => $map,
+    robot_loc    => $new_loc,
+    lambda_count => $lambda_count
+  };
 }
 
 1;
