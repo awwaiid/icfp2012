@@ -5,7 +5,6 @@ use strict;
 use warnings;
 use File::Slurp;
 
-
 sub load_map {
   my $source = shift;
   my @raw_map;
@@ -15,16 +14,22 @@ sub load_map {
   return $map;
 }
 
+sub map_to_string {
+  my $map = shift;
+  my @raw_map = reverse @$map;
+  my $out = '';
+  foreach my $row (@raw_map) {
+    foreach my $col (@$row) {
+      $out .= $col;
+    }
+    $out .= "\n";
+  }
+  return $out;
+}
 
 sub print_map {
   my $map = shift;
-  my @raw_map = reverse @$map;
-  foreach my $row (@raw_map) {
-    foreach my $col (@$row) {
-      print $col;
-    }
-    print "\n";
-  }
+  print map_to_string($map);
   print "\n";
 }
 
