@@ -1,0 +1,29 @@
+#!/usr/bin/env perl
+
+use v5.10;
+use strict;
+use warnings;
+use lib 'lib';
+use IPC::Open2;
+
+use Lifter;
+
+my $botname = shift;
+my $mapname = shift;
+
+my $world = Lifter::load_world($mapname);
+open2(my $bot_out, my $bot_in, $botname) or die "Error opening bot: $!";
+
+while(1) {
+  Lifter::print_map $world;
+  print $bot_in Lifter::world_to_json($world);
+  print $bot_in "\n";
+
+  my $move = <$bot_out>;
+  chomp $move;
+  $world = Lifter::robot_move($world, $move);
+  $world = Lifter::check_ending($world);
+  $world = Lifter::world_update($world);
+  $world = Lifter::check_ending($world);
+}
+
