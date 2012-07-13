@@ -10,7 +10,16 @@ sub load_map {
   my @raw_map;
 
   @raw_map = map { [split //, $_] } read_file($source, { chomp => 1 });
-  my $map = [reverse @raw_map];
+
+  my $height = scalar @raw_map;
+
+  my $map = [];
+  for(my $y = 0; $y < @raw_map; $y++) {
+    my $row = $raw_map[$y];
+    for(my $x = 0; $x < @$row; $x++) {
+      $map->[$x][$height - $y - 1] = $raw_map[$y]->[$x];
+    }
+  }
   return $map;
 }
 
@@ -18,12 +27,16 @@ sub map_to_string {
   my $map = shift;
   my @raw_map = reverse @$map;
   my $out = '';
-  foreach my $row (@raw_map) {
-    foreach my $col (@$row) {
-      $out .= $col;
+
+  my $width = scalar @$map;
+  my $height = scalar @{ $map->[0] };
+  for(my $y = $height - 1; $y >= 0; $y--) {
+    for(my $x = 0; $x < $width; $x++) {
+      $out .= $map->[$x][$y];
     }
     $out .= "\n";
   }
+
   return $out;
 }
 
