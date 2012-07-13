@@ -8,6 +8,9 @@ use Data::Dumper;
 
 my @raw_map;
 
+# STDIN is for the contest
+# or pass a path to the map for easier usage
+
 if(-f $ARGV[0]) {
   @raw_map = map { [split //, $_] } read_file($ARGV[0], { chomp => 1 });
 } else {

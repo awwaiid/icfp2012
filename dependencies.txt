@@ -1,0 +1,6 @@
+CPAN:
+File::Slurp
+
+Apt:
+libfile-slurp-perl
+
