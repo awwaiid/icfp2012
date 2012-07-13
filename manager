@@ -15,7 +15,7 @@ my $world = Lifter::load_world($mapname);
 open2(my $bot_out, my $bot_in, $botname) or die "Error opening bot: $!";
 
 my $alarm = 0;
-local $SIG = sub { $alarm = 1 };
+local $SIG{ALRM} = sub { $alarm = 1 };
 alarm 1; # timeout!
 
 while(1) {
@@ -34,7 +34,10 @@ while(1) {
   $world = Lifter::check_ending($world);
   print_ending($world) if $world->{ending};
 
-  exit if $alarm;
+  if($alarm) {  
+    $world->{ending} = 'TIME';
+    print_ending($world);
+  }
 }
 
 sub print_ending {

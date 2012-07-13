@@ -43,6 +43,8 @@ sub load_world {
     robot_loc     => $robot_loc,
     lambda_remain => $lambda_remain,
     lambda_count  => 0, # How many we've already gotten
+    partial_score => 0,
+    bonus_score   => 0,
     score         => 0,
   };
 }
@@ -325,6 +327,7 @@ sub robot_move {
     robot_loc     => $new_loc,
     lambda_remain => $lambda_remain,
     lambda_count  => $lambda_count,
+    partial_score => $score,
     score         => $score,
   };
 }
