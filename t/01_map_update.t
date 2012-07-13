@@ -3,7 +3,7 @@
 use strict;
 
 use v5.10;
-use Test::More tests => 7;
+use Test::More tests => 13;
 use lib 'lib';
 use Lifter;
 use Data::Printer;
@@ -50,4 +50,45 @@ use Data::Printer;
 
     is Lifter::map_to_string($new_map), $expected_map, "Map updated as expected";
 
+}
+
+## Test rock fall to side of lambda
+
+{
+    my $map_path = 't/test_maps/lambda_fall.map';
+    ok -e $map_path, "Single change map found";
+
+    my $expected_map = `cat t/test_maps/lambda_fall_final.map`;
+
+    my $new_map = Lifter::map_update( Lifter::load_map( $map_path ) ); 
+
+    is Lifter::map_to_string($new_map), $expected_map, "Map updated as expected";
+
+}
+
+## Test rock fall to side of lambda
+
+{
+    my $map_path = 't/test_maps/lambda_not_fall.map';
+    ok -e $map_path, "Single change map found";
+
+    my $expected_map = `cat t/test_maps/lambda_not_fall_final.map`;
+
+    my $new_map = Lifter::map_update( Lifter::load_map( $map_path ) ); 
+
+    is Lifter::map_to_string($new_map), $expected_map, "Map updated as expected";
+
+}
+
+## Test successive rock fall
+
+{
+    my $map_path = 't/test_maps/successive_rock.map';
+    ok -e $map_path, "Single change map found";
+
+    my $expected_map = `cat t/test_maps/successive_rock_final.map`;
+
+    my $new_map = Lifter::map_update( Lifter::load_map( $map_path ) ); 
+
+    is Lifter::map_to_string($new_map), $expected_map, "Map updated as expected";
 }
