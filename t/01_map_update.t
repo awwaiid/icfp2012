@@ -3,7 +3,7 @@
 use strict;
 
 use v5.10;
-use Test::More tests => 5;
+use Test::More tests => 7;
 use lib 'lib';
 use Lifter;
 use Data::Printer;
@@ -36,4 +36,18 @@ use Data::Printer;
     $new_map = Lifter::map_update( $new_map );
 
     is Lifter::map_to_string($new_map), $expected_map, "Map not updated second run";
+}
+
+## Test rock fall to side
+
+{
+    my $map_path = 't/test_maps/side_fall.map';
+    ok -e $map_path, "Single change map found";
+
+    my $expected_map = `cat t/test_maps/side_fall_final.map`;
+
+    my $new_map = Lifter::map_update( Lifter::load_map( $map_path ) ); 
+
+    is Lifter::map_to_string($new_map), $expected_map, "Map updated as expected";
+
 }
