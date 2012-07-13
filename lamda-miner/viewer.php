@@ -2,22 +2,32 @@
 
 if (isset($_POST['next_move'])) {
     $cmd = "./lifter2 " . $_POST['old_map'] . " " . $_POST['next_move'];
-    $new_map = shell_exec($cmd);
+    $shell_return = shell_exec($cmd);
+    $shell_return_parts = explode("\n\n", $shell_return);
+    $generated_map = generateMap($shell_return_parts[0]);
+    $generated_state = generateState($shell_return_parts[1]);
+
     $return = array(
         'success'=>1,
-        'map'=>urlencode($new_map),
+        'state'=>$shell_return_parts[1],
+        'generated_map'=>$generated_map,
+        'generated_state'=>$generated_state,
         'command'=>$cmd
     );
     echo json_encode($return);
     exit;
 }
 
-if (isset($_GET['map'])) {
-    var_dump ($_GET['map']);
-    generateMap(urldecode($_GET['map']));
-    exit;
+function generateState($state) {
+    $state_parts = json_decode($state);
+    $out = "";
+    foreach ($state_parts as $k=>$r) {
+        if (!in_array($k, array('score','lamda_count','robot_loc','lambda_remain','ending'))) continue;
+        if (is_array($r)) $r = json_encode($r);
+        $out .= $k . ": " . $r . "<br />";
+    }
+    return $out;
 }
-
 
 function generateMap($map_string) {
     $symbol_image_map = array(
@@ -30,19 +40,21 @@ function generateMap($map_string) {
         ' ' => 'empty.jpg',
         'O' => 'lift_open.jpg'
     );
-    //$map_string = str_replace("\n", "|", $map_string);
     $map_array = explode("\n", $map_string);
-   // var_dump ($map_array);
+    $out = "";
     foreach ($map_array as $row) {
-        echo "<div class='outer' style='display:block;clear:both' >";
+        $out .= "<div class='outer' style='display:block;clear:both' >";
         for ($i = 0; $i < strlen($row); $i++ ) {
-            echo "<div class='block' style='float:left;padding:0;margin:0'><img height=60 src='images/" . $symbol_image_map[substr($row,$i, 1)] . "' ></div>";
+            $out .= "<div class='block' style='float:left;padding:0;margin:0'><img height=60 src='images/" . $symbol_image_map[substr($row,$i, 1)] . "' ></div>";
         }
-        echo "</div>";
+        $out .= "</div>";
     }
-    echo "<input type='hidden' id='old_map' value='" . urlencode($map_string) . "' />";
+    $out .= "<input type='hidden' id='old_map' value='" . urlencode($map_string) . "' />";
+    return $out;
 }
-// lamda miner viewer
+
+
+// lamda miner viewer defaults
 
 $map_string = "
 #########
@@ -55,6 +67,8 @@ $map_string = "
 #....\ \#
 #########
 ";
+
+$state = '{"score":0, "lambda_count":0,"robot_loc":[2,5], "lambda_remain":7}';
 
 ?>
 
@@ -93,9 +107,10 @@ function abort() {
 function sendMove(move, map) {
     $.post("viewer.php", {next_move:move, old_map:map},
         function (data) {
-            alert(data.map);
+            //alert(data.state);
             if (data.success == 1) {
-                $("#map_container").load("viewer.php?map=" + data.map);
+                $("#map_container").html(data.generated_map);
+                $("#state_container").html(data.generated_state);
             }
         }, "json");
     return false;
@@ -109,11 +124,6 @@ function sendMove(move, map) {
 </head>
 
 <body>
-<?php
-
-
-
-?>
 
 <input id="down" type="button" value="down" onClick="down(); return false;" />
 <input id="up" type="button" value="up" onClick="up(); return false;" />
@@ -125,9 +135,16 @@ function sendMove(move, map) {
 <div id="map_container">
 <?php
 
-generateMap($map_string);
+echo generateMap($map_string);
 
 ?>
 </div>
+<p><p>
+<div id="state_container" style="clear:both;">
+<?php
+echo generateState($state);
+?>
+</div>
+
 </body>
 </html>
