@@ -16,6 +16,21 @@ if(-f $ARGV[0]) {
 } else {
   @raw_map = map { [split //, $_] } read_file(\*STDIN, { chomp => 1 });
 }
+my $map = [reverse @raw_map];
 
-print "Map:\n" . Dumper(\@raw_map);
+
+sub print_map {
+  my $map = shift;
+  my @raw_map = reverse @$map;
+  foreach my $row (@raw_map) {
+    foreach my $col (@$row) {
+      print $col;
+    }
+    print "\n";
+  }
+  print "\n";
+}
+
+print_map $map;
+
 
