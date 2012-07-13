@@ -13,3 +13,9 @@ I'm now going to convert to a more central 'world' data structure, which will co
 Last test added was for successive rocks falling
 
 ... getting hungry too!
+
+2012.07.13.14.40 - Brock
+
+Back from lunch for a while now. Have switched to $world instead of $map. Going to now make a manager that will run AI bots.
+
+
