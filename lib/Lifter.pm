@@ -6,6 +6,7 @@ use warnings;
 use File::Slurp;
 use Storable qw( dclone );
 use JSON::XS;
+use List::Util qw( max );
 
 sub load_map {
   my $source = shift;
@@ -19,6 +20,7 @@ sub load_map {
     @lines = split /\n/, $source;
     @lines = map { chomp; $_ } @lines;
   }
+  my $width = max( map { length $_ } @lines );
   @raw_map = map { [split //, $_] } @lines;
 
   my $height = scalar @raw_map;
@@ -26,8 +28,8 @@ sub load_map {
   my $map = [];
   for(my $y = 0; $y < @raw_map; $y++) {
     my $row = $raw_map[$y];
-    for(my $x = 0; $x < @$row; $x++) {
-      $map->[$x][$height - $y - 1] = $raw_map[$y]->[$x];
+    for(my $x = 0; $x < $width; $x++) {
+      $map->[$x][$height - $y - 1] = $raw_map[$y]->[$x] || ' ';
     }
   }
   return $map;
