@@ -9,16 +9,21 @@ use Lifter;
 
 my $map;
 if(-f $ARGV[0]) {
-  $map = Lifter::load_map($ARGV[0]);
+  $map = Lifter::load_map(shift @ARGV);
+  my $robot_loc = Lifter::get_robot_loc($map);
+  while(1) {
+    Lifter::print_map $map;
+    print "Enter move: ";
+    my $move = <>;
+    chomp $move;
+    ($map, $robot_loc) = Lifter::robot_move($map, $robot_loc, $move);
+    $map = Lifter::check_ending($map, $robot_loc);
+    $map = Lifter::map_update($map);
+    $map = Lifter::check_ending($map, $robot_loc);
+  }
 } else {
   # Contest-mode
   $map = Lifter::load_map(\*STDIN);
+  # ...
 }
-
-Lifter::print_map $map;
-
-$map = Lifter::map_update($map);
-
-Lifter::print_map $map;
-
 

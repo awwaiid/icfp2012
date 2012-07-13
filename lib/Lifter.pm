@@ -46,6 +46,53 @@ sub print_map {
   print "\n";
 }
 
+sub get_robot_loc {
+  my $map = shift;
+
+  my $width = scalar @$map;
+  my $height = scalar @{ $map->[0] };
+
+  for(my $y = 0; $y < $height; $y++) {
+    for(my $x = 0; $x < $width; $x++) {
+      return [$x, $y] if $map->[$x][$y] eq 'R';
+    }
+  }
+}
+
+sub get_lambda_count {
+  my $map = shift;
+
+  my $width = scalar @$map;
+  my $height = scalar @{ $map->[0] };
+
+  my $count = 0;
+  for(my $y = 0; $y < $height; $y++) {
+    for(my $x = 0; $x < $width; $x++) {
+      $count++ if $map->[$x][$y] eq '\\';
+    }
+  }
+  return $count;
+}
+
+sub check_ending {
+  my ($map, $robot_loc) = @_;
+  my ($x, $y) = @$robot_loc;
+  if($map->[$x][$y+1] eq '+') {
+    say "YOU WERE CRUSHED";
+    exit;
+  }
+  # Flip the rocks back to stars
+  $map = [
+    map {
+      [
+        map { s/\+/*/ ; $_ } @$_
+      ] 
+    }
+    @$map
+  ];
+  return $map;
+}
+
 sub map_update {
   my $map = shift;
   my $new_map = [];
@@ -63,27 +110,31 @@ sub map_update {
       my $left_down  = $map->[$x-1][$y-1] if $x > 0 && $y > 0;
 
       # Rocks fall down though empty space
-      if($cell eq '*' && $down eq ' ') {
+      if($cell =~ /[*+]/ && $down eq ' ') {
+        say STDERR "DOWN";
         $new_map->[$x][$y] = ' ';
-        $new_map->[$x][$y-1] = '*';
+        $new_map->[$x][$y-1] = '+';
       }
 
       # Rocks on rocks flow down to the right
-      elsif($cell eq '*' && $down eq '*' && $right eq ' ' && $right_down eq ' ') {
+      elsif($cell =~ /[*+]/ && $down =~ /[*+]/ && $right eq ' ' && $right_down eq ' ') {
+        say STDERR "rock-flow right";
         $new_map->[$x][$y] = ' ';
-        $new_map->[$x+1][$y-1] = '*';
+        $new_map->[$x+1][$y-1] = '+';
       }
       
       # Rocks on rocks flow down to the left
-      elsif($cell eq '*' && $down eq '*' && $left eq ' ' && $left_down eq ' ') {
+      elsif($cell =~ /[*+]/ && $down =~ /[*+]/ && $left eq ' ' && $left_down eq ' ') {
+        say STDERR "rock-flow left";
         $new_map->[$x][$y] = ' ';
-        $new_map->[$x-1][$y-1] = '*';
+        $new_map->[$x-1][$y-1] = '+';
       }
 
       # Rocks on lambdas flow down to the right
-      elsif($cell eq '*' && $down eq '\\' && $right eq ' ' && $right_down eq ' ') {
+      elsif($cell =~ /[*+]/ && $down eq '\\' && $right eq ' ' && $right_down eq ' ') {
+        say STDERR "lambda-flow right";
         $new_map->[$x][$y] = ' ';
-        $new_map->[$x+1][$y-1] = '*';
+        $new_map->[$x+1][$y-1] = '+';
       }
       
       # All other cases... cell remains!
@@ -97,6 +148,7 @@ sub map_update {
 
 sub robot_move {
   my ($map, $robot_loc, $move) = @_;
+  $move = uc $move;
   my ($x, $y) = @$robot_loc;
   my $new_loc = [@$robot_loc];
   if($move eq 'U') {
@@ -140,7 +192,7 @@ sub robot_move {
       print "You win!\n";
       exit;
     }
-    if($map->[$x+1][$y] eq '*' && $map->[$x+2][$y] eq ' ') {
+    if($map->[$x+1][$y] =~ /[*+]/ && $map->[$x+2][$y] eq ' ') {
       $map->[$x][$y] = ' ';
       $map->[$x+1][$y] = 'R';
       $map->[$x+2][$y] = '*';
@@ -160,7 +212,7 @@ sub robot_move {
       print "You win!\n";
       exit;
     }
-    if($map->[$x-1][$y] eq '*' && $map->[$x-2][$y] eq ' ') {
+    if($map->[$x-1][$y] =~ /[*+]/ && $map->[$x-2][$y] eq ' ') {
       $map->[$x][$y] = ' ';
       $map->[$x-1][$y] = 'R';
       $map->[$x-2][$y] = '*';
