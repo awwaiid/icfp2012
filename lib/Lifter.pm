@@ -4,6 +4,7 @@ use v5.10;
 use strict;
 use warnings;
 use File::Slurp;
+use Storable qw( dclone );
 
 sub load_map {
   my $source = shift;
@@ -21,6 +22,18 @@ sub load_map {
     }
   }
   return $map;
+}
+
+sub load_world {
+  my $source = shift;
+  my $map = load_map($source);
+  my $robot_loc = get_robot_loc($map);
+  my $lambda_count = get_lambda_count($map);
+  return {
+    map          => $map,
+    robot_loc    => $robot_loc,
+    lambda_count => $lambda_count,
+  };
 }
 
 sub map_to_string {
@@ -41,8 +54,8 @@ sub map_to_string {
 }
 
 sub print_map {
-  my $map = shift;
-  print map_to_string($map);
+  my $world = shift;
+  print map_to_string($world->{map});
   print "\n";
 }
 
@@ -75,7 +88,9 @@ sub get_lambda_count {
 }
 
 sub check_ending {
-  my ($map, $robot_loc) = @_;
+  my ($world) = @_;
+  my $map = $world->{map};
+  my $robot_loc = $world->{robot_loc};
   my ($x, $y) = @$robot_loc;
   if($map->[$x][$y+1] eq '+') {
     say "YOU WERE CRUSHED";
@@ -90,11 +105,12 @@ sub check_ending {
     }
     @$map
   ];
-  return $map;
+  return { %$world, map => $map };
 }
 
-sub map_update {
-  my $map = shift;
+sub world_update {
+  my $world = shift;
+  my $map = $world->{map};
   my $new_map = [];
   my $map_width = scalar @{$map->[0]};
   my $map_height = scalar @{$map};
@@ -143,11 +159,13 @@ sub map_update {
       }
     }
   }
-  return $new_map;
+  return { %$world, map => $new_map };
 }
 
 sub robot_move {
-  my ($map, $robot_loc, $move) = @_;
+  my ($world, $move) = @_;
+  my $map = dclone($world->{map});
+  my $robot_loc = $world->{robot_loc};
   $move = uc $move;
   my ($x, $y) = @$robot_loc;
   my $new_loc = [@$robot_loc];
@@ -219,7 +237,7 @@ sub robot_move {
       $new_loc = [$x-1, $y];
     }
   }
-  return ($map, $new_loc);
+  return { %$world, map => $map, robot_loc => $new_loc };
 }
 
 1;
