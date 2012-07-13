@@ -101,8 +101,8 @@ use Data::Printer;
 
     my $expected_map = `cat t/test_maps/off_by_one_final.map`;
 
-    my $loaded_map = Lifter::load_map( $map_path );
-    my $new_map = Lifter::map_update( Lifter::robot_move( $loaded_map, Lifter::get_robot_loc( $loaded_map ), 'L' )  ); 
+    my $loaded_world = Lifter::load_world( $map_path );
+    my $new_world = Lifter::map_update( Lifter::robot_move( $loaded_world, 'L' )  ); 
 
-    is Lifter::map_to_string($new_map), $expected_map, "Map updated as expected";
+    is Lifter::map_to_string($new_world->{map}), $expected_map, "Map updated as expected";
 }
