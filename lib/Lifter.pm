@@ -123,12 +123,13 @@ sub check_ending {
       ending        => 'CRUSHED',
     };
   }
+  say p($map);
   # Flip the rocks back to stars
   $map = [
     map {
       [
         map { s/\+/*/ ; $_ } @$_
-      ] 
+      ]
     }
     @$map
   ];
@@ -166,7 +167,7 @@ sub world_update {
         $new_map->[$x][$y] = ' ';
         $new_map->[$x+1][$y-1] = '+';
       }
-      
+
       # Rocks on rocks flow down to the left
       elsif($cell =~ /[*+]/ && $down =~ /[*+]/ && $left eq ' ' && $left_down eq ' ') {
         # say STDERR "rock-flow left";
@@ -185,7 +186,7 @@ sub world_update {
       elsif($cell eq 'L' && $world->{lambda_remain} == 0) {
         $new_map->[$x][$y] = 'O';
       }
-      
+
       # All other cases... cell remains!
       else {
         $new_map->[$x][$y] = $cell;
