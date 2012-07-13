@@ -16,13 +16,26 @@ if(-f $ARGV[0]) {
     my $move = <>;
     chomp $move;
     $world = Lifter::robot_move($world, $move);
+    print_ending($world) if $world->{ending};
     $world = Lifter::check_ending($world);
+    print_ending($world) if $world->{ending};
     $world = Lifter::world_update($world);
+    print_ending($world) if $world->{ending};
     $world = Lifter::check_ending($world);
+    print_ending($world) if $world->{ending};
   }
 } else {
   # Contest-mode
   my $map = Lifter::load_map(\*STDIN);
   # ...
+}
+
+sub print_ending {
+  my $world = shift;
+  say "Result: $world->{ending}!";
+  say "Partial score: $world->{partial_score}";
+  say "Bonus score: $world->{bonus_score}";
+  say "Final score: $world->{score}";
+  exit;
 }
 

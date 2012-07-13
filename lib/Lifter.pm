@@ -124,9 +124,10 @@ sub check_ending {
   my $robot_loc = $world->{robot_loc};
   my ($x, $y) = @$robot_loc;
   if($map->[$x][$y+1] eq '+') {
-    say "YOU WERE CRUSHED";
-    say "Score: $world->{score}";
-    exit;
+    return {
+      %$world,
+      ending => 'CRUSHED',
+    };
   }
   # Flip the rocks back to stars
   $map = [
@@ -225,11 +226,13 @@ sub robot_move {
       $new_loc = [$x, $y+1];
     }
     if($map->[$x][$y+1] eq 'O') {
-      print "You win!\n";
-      print "Partial score: $score\n";
-      print "Bonus: " . ($lambda_count * 50) . "\n";
-      print "Total: " . ($score + $lambda_count * 50) . "\n";
-      exit;
+      return {
+        %$world,
+        ending        => 'WIN',
+        partial_score => $score,
+        bonus_score   => $lambda_count * 50,
+        score         => $score + $lambda_count * 50,
+      };
     }
   }
   if($move eq 'D') {
@@ -247,11 +250,13 @@ sub robot_move {
       $new_loc = [$x, $y-1];
     }
     if($map->[$x][$y-1] eq 'O') {
-      print "You win!\n";
-      print "Partial score: $score\n";
-      print "Bonus: " . ($lambda_count * 50) . "\n";
-      print "Total: " . ($score + $lambda_count * 50) . "\n";
-      exit;
+      return {
+        %$world,
+        ending        => 'WIN',
+        partial_score => $score,
+        bonus_score   => $lambda_count * 50,
+        score         => $score + $lambda_count * 50,
+      };
     }
   }
   if($move eq 'R') {
@@ -269,11 +274,13 @@ sub robot_move {
       $new_loc = [$x+1, $y];
     }
     if($map->[$x+1][$y] eq 'O') {
-      print "You win!\n";
-      print "Partial score: $score\n";
-      print "Bonus: " . ($lambda_count * 50) . "\n";
-      print "Total: " . ($score + $lambda_count * 50) . "\n";
-      exit;
+      return {
+        %$world,
+        ending        => 'WIN',
+        partial_score => $score,
+        bonus_score   => $lambda_count * 50,
+        score         => $score + $lambda_count * 50,
+      };
     }
     if($map->[$x+1][$y] =~ /[*+]/ && $map->[$x+2][$y] eq ' ') {
       $map->[$x][$y] = ' ';
@@ -297,11 +304,13 @@ sub robot_move {
       $new_loc = [$x-1, $y];
     }
     if($map->[$x-1][$y] eq 'O') {
-      print "You win!\n";
-      print "Partial score: $score\n";
-      print "Bonus: " . ($lambda_count * 50) . "\n";
-      print "Total: " . ($score + $lambda_count * 50) . "\n";
-      exit;
+      return {
+        %$world,
+        ending        => 'WIN',
+        partial_score => $score,
+        bonus_score   => $lambda_count * 50,
+        score         => $score + $lambda_count * 50,
+      };
     }
     if($map->[$x-1][$y] =~ /[*+]/ && $map->[$x-2][$y] eq ' ') {
       $map->[$x][$y] = ' ';
