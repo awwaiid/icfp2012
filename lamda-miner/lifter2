@@ -11,7 +11,7 @@ use URI::Escape;
 my $input = shift @ARGV;
 my $map_string = uri_unescape($input);
 my $world = Lifter::load_world($map_string);
-my $move = 'R';
+my $move = shift @ARGV;
 
 $world = Lifter::robot_move($world, $move);
 $world = Lifter::check_ending($world);
@@ -19,4 +19,5 @@ $world = Lifter::world_update($world);
 $world = Lifter::check_ending($world);
 
 Lifter::print_map $world;
+print $move;
 

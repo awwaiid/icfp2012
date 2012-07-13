@@ -1,26 +1,12 @@
 <?php
 
 if (isset($_POST['next_move'])) {
-
-    $map_string = "
-#########
-#.*..#\.#
-#.\..#\.L
-#.R .##.#
-#.\  ...#
-#..\  ..#
-#...\  ##
-#....\ \#
-#########
-";
-
-    $encoded_map = urlencode($map_string);
-
-    $cmd = "";
-
+    $cmd = "./lifter2 " . $_POST['old_map'] . " " . $_POST['next_move'];
+    $new_map = shell_exec($cmd);
     $return = array(
         'success'=>1,
-        'map'=>$encoded_map
+        'map'=>urlencode($new_map),
+        'command'=>$cmd
     );
     echo json_encode($return);
     exit;
@@ -43,8 +29,8 @@ function generateMap($map_string) {
         ' ' => 'empty.jpg',
         'O' => 'lift_open.jpg'
     );
-    $map_string = str_replace("\n", "|", $map_string);
-    $map_array = explode("|", $map_string);
+    //$map_string = str_replace("\n", "|", $map_string);
+    $map_array = explode("\n", $map_string);
    // var_dump ($map_array);
     foreach ($map_array as $row) {
         echo "<div class='outer' style='display:block;clear:both' >";
@@ -53,6 +39,7 @@ function generateMap($map_string) {
         }
         echo "</div>";
     }
+    echo "<input type='hidden' id='old_map' value='" . urlencode($map_string) . "' />";
 }
 // lamda miner viewer
 
@@ -79,33 +66,32 @@ $map_string = "
 <script>
 
 function up() {
-    sendMove('U');
+    sendMove('U', $("#old_map").val());
 }
 
 function down() {
-    sendMove('D');
+    sendMove('D', $("#old_map").val());
 }
 
 function right() {
-    sendMove('R');
+    sendMove('R', $("#old_map").val());
 }
 
 function left() {
-    sendMove('L');
+    sendMove('L', $("#old_map").val());
 }
 
 function wait() {
-    sendMove('W');
+    sendMove('W', $("#old_map").val());
 }
 
 function abort() {
     sendMove('A');
 }
 
-function sendMove(move) {
-    $.post("viewer.php", {next_move:move},
+function sendMove(move, map) {
+    $.post("viewer.php", {next_move:move, old_map:map},
         function (data) {
-            alert (data.map);
             alert(data.map);
             if (data.success == 1) {
                 $("#map_container").load("viewer.php?map=" + data.map);
