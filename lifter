@@ -38,22 +38,45 @@ sub map_update {
   my $map_height = scalar @{$map};
   for(my $x = 0; $x < $map_width; $x++) {
     for(my $y = 0; $y < $map_height; $y++) {
-      my $cell = $map->[$x][$y];
-      my $left = $map->[$x-1][$y] if $x > 0;
-      my $right = $map->[$x+1][$y] if $x < $map_width - 1;
-      my $down = $map->[$x][$y-1] if $y > 0;
-      my $up = $map->[$x][$y+1] if $y < $map_height - 1;
+
+      my $cell       = $map->[$x][$y];
+      my $left       = $map->[$x-1][$y] if $x > 0;
+      my $right      = $map->[$x+1][$y] if $x < $map_width - 1;
+      my $down       = $map->[$x][$y-1] if $y > 0;
+      my $up         = $map->[$x][$y+1] if $y < $map_height - 1;
+      my $right_down = $map->[$x+1][$y-1] if $x < $map_width - 1 && $y > 0;
+      my $left_down  = $map->[$x-1][$y-1] if $x > 0 && $y > 0;
+
       # Rocks fall down though empty space
-      if($cell eq '*' && $down = ' ') {
+      if($cell eq '*' && $down eq ' ') {
         $new_map->[$x][$y] = ' ';
         $new_map->[$x][$y-1] = '*';
-      } else {
-        # All other cases... cell remains!
+      }
+
+      # Rocks flow down to the right
+      elsif($cell eq '*' && $down eq '*' && $right eq ' ' && $right_down eq ' ') {
+        $new_map->[$x][$y] = ' ';
+        $new_map->[$x+1][$y-1] = '*';
+      }
+      
+      # Rocks flow down to the left
+      elsif($cell eq '*' && $down eq '*' && $left eq ' ' && $left_down eq ' ') {
+        $new_map->[$x][$y] = ' ';
+        $new_map->[$x-1][$y-1] = '*';
+      }
+      
+      # All other cases... cell remains!
+      else {
         $new_map->[$x][$y] = $cell;
       }
     }
   }
+  return $new_map;
 }
+
+print_map $map;
+
+$map = map_update($map);
 
 print_map $map;
 
