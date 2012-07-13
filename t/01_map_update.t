@@ -3,7 +3,7 @@
 use strict;
 
 use v5.10;
-use Test::More tests => 15;
+use Test::More tests => 16;
 use lib 'lib';
 use Lifter;
 use Data::Printer;
@@ -86,11 +86,15 @@ use Data::Printer;
     my $map_path = 't/test_maps/successive_rock.map';
     ok -e $map_path, "Successive rock fall map found";
 
-    my $expected_map = `cat t/test_maps/successive_rock_final.map`;
+    my $expected_map = `cat t/test_maps/successive_rock_second.map`;
 
     my $new_world = Lifter::world_update( Lifter::load_world( $map_path ) ); 
 
     is Lifter::map_to_string($new_world->{map}), $expected_map, "Map updated as expected";
+
+    $expected_map = `cat t/test_maps/successive_rock_final.map`;
+    $new_world = Lifter::world_update( $new_world );
+    is Lifter::map_to_string($new_world->{map}), $expected_map, "Final map updated as expected";
 }
 
 ## Test off by one error
@@ -102,7 +106,7 @@ use Data::Printer;
     my $expected_map = `cat t/test_maps/off_by_one_final.map`;
 
     my $loaded_world = Lifter::load_world( $map_path );
-    my $new_world = Lifter::map_update( Lifter::robot_move( $loaded_world, 'L' )  ); 
+    my $new_world = Lifter::world_update( Lifter::robot_move( $loaded_world, 'L' )  ); 
 
     is Lifter::map_to_string($new_world->{map}), $expected_map, "Map updated as expected";
 }
