@@ -5,6 +5,7 @@ use strict;
 use warnings;
 use File::Slurp;
 use Storable qw( dclone );
+use JSON::XS;
 
 sub load_map {
   my $source = shift;
@@ -34,6 +35,16 @@ sub load_world {
     robot_loc    => $robot_loc,
     lambda_count => $lambda_count,
   };
+}
+
+sub world_to_json {
+  my $world = shift;
+  return JSON::XS->new->indent(0)->encode($world);
+}
+
+sub json_to_world {
+  my $json = shift;
+  return JSON::XS->new->decode($json);
 }
 
 sub map_to_string {
