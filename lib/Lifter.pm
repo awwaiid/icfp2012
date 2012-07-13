@@ -55,16 +55,22 @@ sub map_update {
         $new_map->[$x][$y-1] = '*';
       }
 
-      # Rocks flow down to the right
+      # Rocks on rocks flow down to the right
       elsif($cell eq '*' && $down eq '*' && $right eq ' ' && $right_down eq ' ') {
         $new_map->[$x][$y] = ' ';
         $new_map->[$x+1][$y-1] = '*';
       }
       
-      # Rocks flow down to the left
+      # Rocks on rocks flow down to the left
       elsif($cell eq '*' && $down eq '*' && $left eq ' ' && $left_down eq ' ') {
         $new_map->[$x][$y] = ' ';
         $new_map->[$x-1][$y-1] = '*';
+      }
+
+      # Rocks on lambdas flow down to the right
+      elsif($cell eq '*' && $down eq '\\' && $right eq ' ' && $right_down eq ' ') {
+        $new_map->[$x][$y] = ' ';
+        $new_map->[$x+1][$y-1] = '*';
       }
       
       # All other cases... cell remains!
