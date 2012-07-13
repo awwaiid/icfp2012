@@ -14,6 +14,10 @@ my $mapname = shift;
 my $world = Lifter::load_world($mapname);
 open2(my $bot_out, my $bot_in, $botname) or die "Error opening bot: $!";
 
+my $alarm = 0;
+local $SIG = sub { $alarm = 1 };
+alarm 1; # 5 second timeout!
+
 while(1) {
   Lifter::print_map $world;
   print $bot_in Lifter::world_to_json($world);
@@ -22,8 +26,22 @@ while(1) {
   my $move = <$bot_out>;
   chomp $move;
   $world = Lifter::robot_move($world, $move);
+  print_ending($world) if $world->{ending};
   $world = Lifter::check_ending($world);
+  print_ending($world) if $world->{ending};
   $world = Lifter::world_update($world);
+  print_ending($world) if $world->{ending};
   $world = Lifter::check_ending($world);
+  print_ending($world) if $world->{ending};
+
+  exit if $alarm;
 }
 
+sub print_ending {
+  my $world = shift;
+  say "Result: $world->{ending}!";
+  say "Partial score: $world->{partial_score}";
+  say "Bonus score: $world->{bonus_score}";
+  say "Final score: $world->{score}";
+  exit;
+}
