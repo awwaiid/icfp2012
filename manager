@@ -16,7 +16,7 @@ open2(my $bot_out, my $bot_in, $botname) or die "Error opening bot: $!";
 
 my $alarm = 0;
 local $SIG = sub { $alarm = 1 };
-alarm 1; # 5 second timeout!
+alarm 1; # timeout!
 
 while(1) {
   Lifter::print_map $world;

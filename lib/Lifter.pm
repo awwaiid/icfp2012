@@ -116,7 +116,9 @@ sub check_ending {
   if($map->[$x][$y+1] eq '+') {
     return {
       %$world,
-      ending => 'CRUSHED',
+      partial_score => $world->{score},
+      bonus_score   => 0,
+      ending        => 'CRUSHED',
     };
   }
   # Flip the rocks back to stars
