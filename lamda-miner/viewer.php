@@ -65,6 +65,8 @@ function generateMap($map_string) {
     return $out;
 }
 
+
+
 function generateMapFromJSON($world) {
     global $dead_miner;
     $symbol_image_map = array(
@@ -117,6 +119,10 @@ $world = '{"waterproof_step":0,"waterproof":10,"bonus_score":0,"partial_score":0
         '["#",".",".","\\\"," "," ",".",".","#"," "],["#",".","\\\"," "," ",".",".",".","#"," "],["#","\\\"," "," ",".","#","#","#","#"," "],' .
         '["#"," "," ",".",".","#","\\\","\\\","#"," "],["#","\\\","#",".",".",".",".",".","#"," "],["#","#","#","#","#","#","L","#","#"," "]],' .
        	'"flooding":0,"flooding_step":0,"robot_loc":[2,5],"lambda_count":0}';
+
+$world = '
+{"waterproof_step":0,"waterproof":10,"bonus_score":0,"lambda_remain":8,"partial_score":0,"score":0,"water":0,"map":[["#","#","#","#","#","#","#","#","#"],["#",".","*",".",".","#","\\\",".","#"],["#",".","\\\",".",".","#","\\\",".","L"],["#",".","R"," ",".","#","#",".","#"],["#",".","\\\"," "," ",".",".",".","#"],["#",".",".","\\\"," "," ",".",".","#"],["#",".",".",".","\\\"," "," ","#","#"],["#",".",".",".",".","\\\"," ","\\\","#"],["#","#","#","#","#","#","#","#","#"]],"flooding":0,"flooding_step":0,"robot_loc":[2,5],"lambda_count":0}
+'
 
 ?>
 <html>
@@ -201,7 +207,7 @@ $(document).keydown(function(e){
 <?php
 
 echo generateMapFromJSON($world);
-
+//   echo generateMap($map_string);
 ?>
 </div>
 <p><p>
