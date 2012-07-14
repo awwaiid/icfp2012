@@ -18,13 +18,26 @@ if (isset($_POST['next_move'])) {
     exit;
 }
 
+if (isset($_POST['play_bot'])) {
+
+    $cmd = "./" . $_POST['play_bot'] ." '" . $_POST['old_world'] . "'";
+    $shell_return = shell_exec($cmd);
+    $return = array(
+        'success'=>1,
+        'next_move'=>$shell_return,
+        'command'=>$cmd
+    );
+    echo json_encode($return);
+    exit;
+}
+
 function generateState($state) {
     global $dead_miner;
     $state_parts = json_decode($state, true);
     $out = "";
     foreach ($state_parts as $k => $r) {
         if (!in_array($k, array('score','lamda_count','robot_loc','lambda_remain','ending',
-        	'flooding_step', 'waterproof', 'waterproof_step'))) continue;
+        	'flooding_step', 'waterproof', 'waterproof_step', 'water'))) continue;
         if (is_array($r)) $r = json_encode($r);
         $out .= $k . ": " . $r . "<br />";
         if ($k == 'ending' && $r != 'WIN') {
@@ -83,14 +96,23 @@ function generateMapFromJSON($world) {
     $world_array = json_decode($world, true);
     $map_array = $world_array['map'];
     $out = "";
-    foreach ($map_array as $row) {
+    $row_count = count($map_array);
+    $water_row = 3; //$world_array['water'];
+
+    foreach ($map_array as $key=>$row) {
+
+        if ($row_count - $key  <= $water_row) { $water_css = "background-color:aqua;"; $tran_css = "opacity:0.4;filter:alpha(opacity=40);"; }
+        else { $water_css = ''; $tran_css = ''; }
+
         if (ctype_space($row)) continue;
         $out .= "<div class='outer' style='display:block;clear:both' >";
         foreach ($row as $r) {
             $symbol = isset($symbol_image_map[$r]) ? $symbol_image_map[$r] : 'dead_miner.jpg';
             if ($symbol == 'miner.jpg' && $dead_miner == true) $symbol = 'dead_miner.jpg';
-            $out .= "<div class='block' style='float:left;padding:0;margin:0'><img height=60
-            	src='images/" . $symbol . "' ></div>";
+            $out .= "<div class='block'
+            	style='" . $water_css ."float:left;padding:0;margin:0;height:60;width:60'>";
+            $out .= "<img height=60 style='" . $tran_css . "' src='images/" . $symbol . "' >";
+            $out .= "</div>";
         }
         $out .= "</div>";
     }
@@ -150,7 +172,7 @@ function abort() {
 function sendMove(move, world) {
     $.post("viewer.php", {next_move:move, old_world:world},
         function (data) {
-            alert(data.command);
+            //alert(data.command);
             if (data.success == 1) {
                 $("#map_container").html(data.generated_map);
                 $("#state_container").html(data.generated_state);
@@ -177,11 +199,16 @@ $(document).keydown(function(e){
         down();
         return false;
     }
+    if (e.keyCode == 66) {
+        playBot();
+        return false;
+    }
 });
 
-function playBot(bot) {
-    $.post("viewer.php", {play_bot:bot, old_world:$("#old_world").val()},
+function playBot() {
+    $.post("viewer.php", {play_bot:$("#play_bot").val(), old_world:$("#old_world").val()},
             function (data) {
+        //alert (data.command + data.next_move);
                 if (data.success == 1) {
                     sendMove(data.next_move, $("#old_world").val());
                 }
@@ -192,21 +219,22 @@ function playBot(bot) {
 
 </script>
 
-
 <title>lamda miner viewer</title>
 </head>
 
 <body>
-
-<input id="down" type="button" value="down" onClick="down(); return false;" />
-<input id="up" type="button" value="up" onClick="up(); return false;" />
-<input id="right" type="button" value="right" onClick="right(); return false;" />
-<input id="left" type="button" value="left" onClick="left(); return false;" />
+<input style="margin-left:25px;width:40px" id="up" type="button" value="up" onClick="up(); return false;" />
+<br />
+<input id="right" style="width:40px" type="button" value="right" onClick="right(); return false;" />
+<input id="left" style="width:40px" type="button" value="left" onClick="left(); return false;" />
 <input id="wait" type="button" value="wait" onClick="wait(); return false;" />
 <input id="abort" type="button" value="abort" onClick="abort(); return false;" />
-<input id="play_bot" type="text" value="" />
+<input id="play_bot" type="text" value="dumbbot" />
 <input id="submit_play_bot" type="submit" onClick="playBot(); return false;" value="Play Bot" />
-
+<input id="play_map" type="text" value="" />
+<input id="submit_play_map" type="submit" onClick="playMap(); return false;" value="Play Map" />
+<br />
+<input style="margin-left:25px;width:40px" id="down" type="button" value="down" onClick="down(); return false;" />
 
 <div id="map_container">
 <?php
