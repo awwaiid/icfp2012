@@ -13,7 +13,7 @@ use Lifter;
 use IO::Handle;
 STDIN->autoflush(1);
 STDOUT->autoflush(1);
-  
+
 my $input = <>;
 exit unless $input;
 chomp $input;
