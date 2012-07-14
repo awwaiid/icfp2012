@@ -19,7 +19,7 @@ exit unless $input;
 chomp $input;
 
 sub debug {
-  return;
+  # return;
   print STDERR $_ foreach @_;
 }
 
@@ -60,9 +60,9 @@ sub run_ga {
   $ga = AI::Genetic->new(
     -fitness    => \&test_moves,
     -type       => 'listvector',
-    -population => 50,
+    -population => 100,
     -crossover  => 0.9,
-    -mutation   => 0.03,
+    -mutation   => 0.02,
   );
   $ga->init([
     map { [qw/ U U D D L L R R W A /] } 0..100
@@ -71,7 +71,7 @@ sub run_ga {
   # $ga->evolve('tournamentUniform', 50);
   # $ga->evolve('tournamentTwoPoint', 50);
   # $ga->evolve('tournamentSinglePoint', 50);
-  $ga->evolve('randomUniform', 50);
+  $ga->evolve('randomUniform', 20);
   my $best = $ga->getFittest;
   debug "\nBest score = " . $best->score . "\n";
   debug "Best genes = " . join('',$best->genes) . "\n";
@@ -88,7 +88,46 @@ sub test_moves {
     $new_world = Lifter::check_ending($new_world);
     last if $new_world->{ending};
   }
+
+  # my $path_bonus = get_path_bonus($new_world);
+
   debug $new_world->{score} . "\t";
   return $new_world->{score};
 }
+
+
+# sub get_path_bonus {
+  # my $world = shift;
+  # my $graph = Graph->new;
+
+  # my $map = $world->{map};
+
+  # my $width = scalar @$map;
+  # my $height = scalar @{ $map->[0] };
+
+  # my $add_directional_edges = sub {
+    # my ($x, $y) = @_;
+    # foreach my $dest ([$x+1,$y,'R'],[$x-1,$y,'L'],[$x,$y-1,'D'],[$x,$y+1,'U']) {
+      # my ($i, $j, $d) = @$dest;
+      # next if $i < 0 || $j < 0 || $i >= $width || $j >= $height;
+      # my $t = $map->[$i][$j];
+      # if($t =~ /[\\ .OA-L]/) {
+        # $graph->add_edge("$x,$y", "$i,$j", $d);
+      # }
+    # }
+  # }
+
+  # my $count = 0;
+  # for(my $y = 0; $y < $height; $y++) {
+    # for(my $x = 0; $x < $width; $x++) {
+      # my $cell = $map->[$x][$y];
+      # if($cell =~ /[\\ .]/) {
+        # $add_directional_edges->($x,$y);
+      # }
+    # }
+  # }
+
+  # return $count;
+# }
+
 
