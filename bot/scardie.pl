@@ -10,6 +10,12 @@ use Data::Printer;
 STDIN->autoflush(1);
 STDOUT->autoflush(1);
 
+# This bot checks the 4 adjacent squares for lambdas
+# if it finds one it moves the bot to that square and
+# check the 4 adjacent squares and repeats
+# otherwise it aborts.
+
+
 my @moves = qw( L R U D W );
 
 while(1) {
@@ -17,11 +23,9 @@ while(1) {
   exit unless $input;
   chomp $input;
 
-  # we don't use world... but if we did...
   my $world = decode_json($input);
 
   my $move = check_lambda( $world ) || 'A';
-say STDERR "using move $move";
   print "$move\n";
 }
 
