@@ -9,17 +9,18 @@ use Lifter;
 use URI::Escape;
 
 my $input = shift @ARGV;
-my $map_string = uri_unescape($input);
-$map_string =~ s/\+/ /gms;
+#my $map_string = uri_unescape($input);
+#$map_string =~ s/\+/ /gms;
 # print "map_string: [$map_string]\n";
-my $world = Lifter::load_world($map_string);
+#my $world = Lifter::load_world($map_string);
+my $world = Lifter::json_to_world($input);
 my $move = shift @ARGV;
-# Lifter::print_map $world;
+
 
 $world = Lifter::robot_move($world, $move);
 $world = Lifter::check_ending($world);
 $world = Lifter::world_update($world);
 $world = Lifter::check_ending($world);
 
-Lifter::print_map $world;
+#Lifter::print_map $world;
 print Lifter::world_to_json $world;
