@@ -35,4 +35,8 @@ We have an interactive command-line one now, that you can win and get a score an
 
 Found issue where our program counted Abort as -1 and their validator didn't
 
+2012.07.13.21.22 - Mike
+
+* Added scardie.pl bot that checks for immediately adjacent lambdas and aborts when it runs out
+* updated manager to take a array maps and keep a running total
 
