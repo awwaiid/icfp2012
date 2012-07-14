@@ -71,12 +71,30 @@ sub load_world {
 
 sub world_to_json {
   my $world = shift;
+  my $flip_map = shift || 0;
+  $world = flip_map($world) if $flip_map;
   return JSON::XS->new->indent(0)->encode($world);
 }
 
 sub json_to_world {
   my $json = shift;
+  my $flip_map = shift || 0;
+  $world = flip_map($world) if $flip_map;
   return JSON::XS->new->decode($json);
+}
+
+sub flip_map {
+  my $world = shift;
+  my $map = $world->{map};
+  my $new_map = [];
+  my $width = scalar @$map;
+  my $height = scalar @{ $map->[0] };
+  for(my $x = 0; $x < $width; $x++) {
+    for(my $y = 0; $y < $height; $y++) {
+      $new_map->[$x][$height - $y] = $map->[$x][$y];
+    }
+  }
+  return { %$world, map => $new_map };
 }
 
 sub map_to_string {

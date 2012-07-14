@@ -29,7 +29,8 @@ if(-f $ARGV[0]) {
   }
 } else {
   # Contest-mode
-  my $map = Lifter::load_map(\*STDIN);
+  my $world = Lifter::load_world(\*STDIN);
+
   # ...
 }
 
