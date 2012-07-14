@@ -1,0 +1,22 @@
+{
+	"waterproof_step":0,
+	"waterproof":10,
+	"bonus_score":0,
+	"move_count":0,
+	"lambda_remain":3,
+	"partial_score":0,
+	"score":0,
+	"water":0,
+	"map":[
+		["#","#","#","#","#","#"],
+		["#","."," ","*","R","#"],
+		["#"," "," ","\\\",".","#"],
+		["#","\\\"," ","*"," ","#"],
+		["L"," "," ",".","\\\","#"],
+		["#","#","#","#","#","#"]
+	],
+	"flooding":0,
+	"flooding_step":0,
+	"robot_loc":[4,4],
+	"lambda_count":0
+}

@@ -4,12 +4,11 @@ class WorldFacade {
 
     public static function findLambdas(Map $map) {
         $coords = array();
-        foreach ($map->getRows() as $h=>$row) {
+        foreach ($map->getRows() as $y=>$row) {
             if (in_array("\\", $row)) {
-                //var_dump ($row);
-                foreach ($row as $w=>$r) {
+                foreach ($row as $x=>$r) {
                     if ($r == "\\") {
-                        $coords[] = self::getCoord($h, $w, $map->getDimensions());
+                        $coords[] = self::getCoord($x, $y, $map->getDimensions());
                     }
                 }
             }
@@ -17,18 +16,17 @@ class WorldFacade {
         return $coords;
     }
 
-    public function getCoord($h, $w, $dim) {
-        $h = $dim[1] - 1 - $h;
-        $w = $w;
-        return array('w'=>$w, 'h'=>$h);
+    public function getCoord($x, $y, $dim) {
+        $y = $dim[1] - 1 - $y;
+        return new Position($x, $y);
     }
 
     public static function findMiner(Map $map) {
-        foreach ($map->getRows() as $h=>$row) {
+        foreach ($map->getRows() as $y=>$row) {
             if (in_array("R", $row)) {
-                foreach ($row as $w=>$r) {
+                foreach ($row as $x=>$r) {
                     if ($r == "R") {
-                        return self::getCoord($h, $w, $map->getDimensions());
+                        return self::getCoord($x, $y, $map->getDimensions());
                     }
                 }
             }
@@ -38,7 +36,7 @@ class WorldFacade {
 
     public static function whatIsAt(Map $map, $coord) {
         $rows = $map->getRows();
-        return $rows[$coord['h']][$coord['w']];
+        return $rows[$coord->y][$coord->x];
     }
 
 }

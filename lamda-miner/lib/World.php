@@ -229,7 +229,12 @@ class World {
      */
     public function setRobotLoc ($robotLoc)
     {
-        $this->robotLoc = $robotLoc;
+        if (is_array($robotLoc)) {
+            $this->robotLoc = new Position($robotLoc[0], $robotLoc[1]);
+        }
+        else {
+            $this->robotLoc = $robotLoc;
+        }
     }
 
 	/**

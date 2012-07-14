@@ -5,6 +5,8 @@ require_once 'lib/Map.php';
 require_once 'lib/WorldFacade.php';
 require_once 'lib/MathFacade.php';
 require_once 'lib/Logging.php';
+require_once 'lib/Position.php';
+require_once 'lib/Strategy.php';
 
 // my super cool php bot
 
@@ -14,9 +16,11 @@ $log->lfile('out.log');
 
 if (isset($argv[1])) $world_json = $argv[1];
 else {
-    $world_json = '{"waterproof_step":0,"waterproof":10,"bonus_score":0,"move_count":0,"lambda_remain":3,"partial_score":0,"score":0,"water":0,"map":[["#","#","#","#","#","#"],["#","."," ","*","R","#"],["#"," "," ","\\\",".","#"],["#","\\\"," ","*"," ","#"],["L"," "," ",".","\\\","#"],["#","#","#","#","#","#"]],"flooding":0,"flooding_step":0,"robot_loc":[4,4],"lambda_count":0}';
+    $world_json = file_get_contents('default_world.json');
 }
 $world = new World($world_json);
+$strategy = new Strategy();
+
 
 $lamdas = WorldFacade::findLambdas($world->getMap());
 $robot_loc = WorldFacade::findMiner($world->getMap());
