@@ -13,12 +13,16 @@ use Lifter;
 my $botname;
 my @maps;
 my $verbose;
+my $timeout;
 
 my $result = GetOptions(
     'bot=s'     => \$botname,
     'verbose'   => \$verbose,
     'maps=s{,}' => \@maps,
+    'time=s'    => \$timeout,
 );
+
+$timeout ||= 1;
 
 my $total_score = 0;
 
@@ -28,7 +32,7 @@ for my $mapname ( @maps ) {
 
     my $alarm = 0;
     local $SIG{ALRM} = sub { $alarm = 1 };
-    alarm 1; # timeout!
+    alarm $timeout; # timeout!
 
     while(1) {
       if ( $verbose ) {
