@@ -1,9 +1,4 @@
-Not really:
-libplack-perl
-
-Apt:
 libfile-slurp-perl
 libjson-xs-perl
 liblocal-lib-perl
 libdata-printer-perl
-
