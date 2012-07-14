@@ -3,7 +3,7 @@
 use v5.10;
 use strict;
 use warnings;
-use IO::Scalar;
+use IO::Handle;
 use JSON::XS;
 use Data::Printer;
 

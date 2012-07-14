@@ -8,7 +8,7 @@ use List::Util qw( max );
 use JSON::XS;
 use Lifter;
 
-use IO::Scalar;
+use IO::Handle;
 STDIN->autoflush(1);
 STDOUT->autoflush(1);
 

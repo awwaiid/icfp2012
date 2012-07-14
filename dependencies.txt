@@ -7,3 +7,4 @@ libjson-xs-perl
 libplack-perl
 
 liblocal-lib-perl
+libdata-printer-perl
