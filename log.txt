@@ -31,3 +31,8 @@ currently just going through maps to find bugs
 
 We have an interactive command-line one now, that you can win and get a score and everything. Jason is building a web UI for it. Mike is hunting and fixing map and physics bugs. I wrote a basic random bot. I'm getting hungry but am pushing off eating for a bit longer :)
 
+2012.07.13.20.11 - Mike
+
+Found issue where our program counted Abort as -1 and their validator didn't
+
+
