@@ -51,7 +51,7 @@ function generateState($state) {
     $out = "";
     foreach ($state_parts as $k => $r) {
         if (!in_array($k, array('score','lamda_count','robot_loc','lambda_remain','ending',
-        	'flooding_step', 'waterproof', 'waterproof_step', 'water'))) continue;
+        	'flooding_step', 'waterproof', 'waterproof_step', 'water', 'tramoline_loc','trampoline_forward','trampoline_back'))) continue;
         if (is_array($r)) $r = json_encode($r);
         $out .= $k . ": " . $r . "<br />";
         if ($k == 'ending' && $r != 'WIN') {
@@ -72,7 +72,25 @@ function generateMap($map_string) {
         '\\' => 'lambda.jpg',
         ' ' => 'empty.jpg',
         'O' => 'lift_open.jpg',
-        '+' => 'rock.jpg'
+        '+' => 'rock.jpg',
+        'A' => 'trampoline1.jpg',
+        'B' => 'trampoline2.jpg',
+        'C' => 'trampoline3.jpg',
+        'D' => 'trampoline4.jpg',
+        'E' => 'trampoline5.jpg',
+        'F' => 'trampoline6.jpg',
+        'G' => 'trampoline7.jpg',
+        'H' => 'trampoline8.jpg',
+        'I' => 'trampoline9.jpg',
+        '1' => 'target1.jpg',
+        '2' => 'target2.jpg',
+        '3' => 'target3.jpg',
+        '4' => 'target4.jpg',
+        '5' => 'target5.jpg',
+        '6' => 'target6.jpg',
+        '7' => 'target7.jpg',
+        '8' => 'target8.jpg',
+        '9' => 'target9.jpg'
     );
     $map_array = explode("\n", $map_string);
     $out = "";
@@ -222,7 +240,7 @@ $(document).keydown(function(e){
 function playBot() {
     $.post("viewer.php", {play_bot:$("#play_bot").val(), old_world:$("#old_world").val()},
             function (data) {
-        //alert (data.command + data.next_move);
+        alert (data.command + data.next_move);
                 if (data.success == 1) {
                     sendMove(data.next_move, $("#old_world").val());
                 }
@@ -234,7 +252,7 @@ function playBot() {
 function playMap() {
     $.post("viewer.php", {play_map:$("#play_map").val()},
             function (data) {
-        //alert (data.command);
+                alert (data.command + "\n" + data.map_json);
                 if (data.success == 1) {
                     $("#map_container").html(data.generated_map);
                     $("#state_container").html(data.generated_state);

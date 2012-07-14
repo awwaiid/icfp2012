@@ -20,20 +20,8 @@ else {
 }
 $world = new World($world_json);
 $strategy = new Strategy();
-
-
-$lamdas = WorldFacade::findLambdas($world->getMap());
-$robot_loc = WorldFacade::findMiner($world->getMap());
-
-$least_dist = null;
-$target_lamda = null;
-foreach ($lamdas as $l) {
-    $d = MathFacade::findDistanceBetweenTwoPoints($robot_loc, $l);
-    if (!$least_dist || $d < $least_dist) {
-        $least_dist = $d;
-        $target_lamda = $l;
-    }
-}
+$my_position = $world->getRobotLoc();
+$closest_lambda = $strategy->findClosestLamda($my_position, $map);
 
 $diff_in_height = abs($target_lamda['h'] - $robot_loc['h']);
 $diff_in_width = abs($target_lamda['w'] - $robot_loc['w']);
