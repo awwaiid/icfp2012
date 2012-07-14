@@ -65,6 +65,7 @@ sub load_world {
     water           => 0, # default water level
     flooding        => 0, # default flooding rate
     waterproof      => 10,# default waterproofing
+    move_number     => 0, # simple count of moves
     %$meta,
   };
 }
@@ -282,6 +283,7 @@ sub robot_move {
   my $lambda_remain = $world->{lambda_remain};
   my $lambda_count = $world->{lambda_count};
   my $score = $world->{score} - 1; # Lose one point!
+  my $move_count = $world->{move_count} + 1;
   $move = uc $move;
   my ($x, $y) = @$robot_loc;
   my $new_loc = [@$robot_loc];
@@ -302,6 +304,7 @@ sub robot_move {
     if($map->[$x][$y+1] eq 'O') {
       return {
         %$world,
+        move_count    => $move_count,
         ending        => 'WIN',
         partial_score => $score,
         bonus_score   => $lambda_count * 50,
@@ -326,6 +329,7 @@ sub robot_move {
     if($map->[$x][$y-1] eq 'O') {
       return {
         %$world,
+        move_count    => $move_count,
         ending        => 'WIN',
         partial_score => $score,
         bonus_score   => $lambda_count * 50,
@@ -350,6 +354,7 @@ sub robot_move {
     if($map->[$x+1][$y] eq 'O') {
       return {
         %$world,
+        move_count    => $move_count,
         ending        => 'WIN',
         partial_score => $score,
         bonus_score   => $lambda_count * 50,
@@ -380,6 +385,7 @@ sub robot_move {
     if($map->[$x-1][$y] eq 'O') {
       return {
         %$world,
+        move_count    => $move_count,
         ending        => 'WIN',
         partial_score => $score,
         bonus_score   => $lambda_count * 50,
@@ -397,6 +403,7 @@ sub robot_move {
     $score++; # give it back!
     return {
       %$world,
+      move_count    => $move_count,
       ending        => 'ABORT',
       partial_score => $score,
       bonus_score   => $lambda_count * 25,
@@ -406,6 +413,7 @@ sub robot_move {
 
   return {
     %$world,
+    move_count    => $move_count,
     map           => $map,
     robot_loc     => $new_loc,
     lambda_remain => $lambda_remain,
