@@ -19,6 +19,7 @@ prove -Ilib t
 
 E.G.
 
-./manager -b bot/random.pl -m maps/*
+./manager -b bot/random.pl -m map/*
 
+./manager -b bot/genie.pl -m map/contest1.map -t 5
 
