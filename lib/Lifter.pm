@@ -65,7 +65,7 @@ sub load_world {
     water           => 0, # default water level
     flooding        => 0, # default flooding rate
     waterproof      => 10,# default waterproofing
-    move_number     => 0, # simple count of moves
+    move_count      => 0, # simple count of moves
     %$meta,
   };
 }
