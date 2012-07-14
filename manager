@@ -5,11 +5,21 @@ use strict;
 use warnings;
 use lib 'lib';
 use IPC::Open2;
+use Getopt::Long;
+use Data::Printer;
 
 use Lifter;
 
-my $botname     = shift;
-my @maps        = @ARGV;
+my $botname;
+my @maps;
+my $verbose;
+
+my $result = GetOptions(
+    'bot=s'     => \$botname,
+    'verbose'   => \$verbose,
+    'maps=s{,}' => \@maps,
+);
+
 my $total_score = 0;
 
 for my $mapname ( @maps ) {
@@ -21,36 +31,42 @@ for my $mapname ( @maps ) {
     alarm 1; # timeout!
 
     while(1) {
-      Lifter::print_map $world;
+      if ( $verbose ) {
+          Lifter::print_map $world;
+      }
       print $bot_in Lifter::world_to_json($world);
       print $bot_in "\n";
 
       my $move = <$bot_out>;
       chomp $move;
       $world = Lifter::robot_move($world, $move);
-      print_ending($world) if $world->{ending};
+      print_ending($mapname, $world) && last if $world->{ending};
       $world = Lifter::check_ending($world);
-      print_ending($world) if $world->{ending};
+      print_ending($mapname, $world) && last if $world->{ending};
       $world = Lifter::world_update($world);
-      print_ending($world) if $world->{ending};
+      print_ending($mapname, $world) && last if $world->{ending};
       $world = Lifter::check_ending($world);
-      print_ending($world) if $world->{ending};
+      print_ending($mapname, $world) && last if $world->{ending};
 
       if($alarm) {  
         $world->{ending} = 'TIME';
-        print_ending($world);
+        print_ending($mapname, $world);
+        last;
       }
     }
 }
 
-say "Final score: $total_score";
+say "\nTotal score: $total_score\n";
 
 sub print_ending {
+  my $map = shift;
   my $world = shift;
+  say "World: $map";
   say "Result: $world->{ending}!";
   say "Partial score: $world->{partial_score}";
   say "Bonus score: $world->{bonus_score}";
   say "Final score: $world->{score}";
+  print "\n";
   $total_score += $world->{score};
-  last;
+  return 1;
 }

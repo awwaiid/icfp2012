@@ -15,6 +15,10 @@ prove -Ilib t
 ------
 
 # Run the random bot on contest1.map
-./manager bot/random.pl map/contest1.map
+./manager -b <path to bot> [-v] -m <path to map> [<path to another map> ...]
+
+E.G.
+
+./manager -b bot/random.pl -m maps/*
 
 
