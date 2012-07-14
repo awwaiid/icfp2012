@@ -305,80 +305,57 @@ sub robot_move {
   $move = uc $move;
   my ($x, $y) = @$robot_loc;
   my $new_loc = [@$robot_loc];
+
+  # Yes... nested sub to make scoping easy
+  my $robot_move_to = sub {
+    my ($i, $j) = @_;
+
+    if($map->[$i][$j] eq '\\') {
+      $lambda_remain-- ;
+      $lambda_count++ ;
+      $score += 25 ;
+    }
+    $map->[$x][$y] = ' ';
+    $map->[$i][$j] = 'R';
+    $new_loc = [$i, $j];
+  };
+
+  my $robot_win = sub {
+    return {
+      %$world,
+      move_count    => $move_count,
+      ending        => 'WIN',
+      partial_score => $score,
+      bonus_score   => $lambda_count * 50,
+      score         => $score + $lambda_count * 50,
+    };
+  };
+
   if($move eq 'U') {
-    if($map->[$x][$y+1] eq ' '
-      || $map->[$x][$y+1] eq '.'
-      || $map->[$x][$y+1] eq '\\'
-    ) {
-      if($map->[$x][$y+1] eq '\\') {
-        $lambda_remain-- ;
-        $lambda_count++ ;
-        $score += 25 ;
-      }
-      $map->[$x][$y] = ' ';
-      $map->[$x][$y+1] = 'R';
-      $new_loc = [$x, $y+1];
+    if($map->[$x][$y+1] =~ /[ .\\A-I]/) {
+      $robot_move_to->($x, $y+1);
     }
     if($map->[$x][$y+1] eq 'O') {
-      return {
-        %$world,
-        move_count    => $move_count,
-        ending        => 'WIN',
-        partial_score => $score,
-        bonus_score   => $lambda_count * 50,
-        score         => $score + $lambda_count * 50,
-      };
+      return $robot_win->();
     }
   }
   if($move eq 'D') {
-    if($map->[$x][$y-1] eq ' '
-      || $map->[$x][$y-1] eq '.'
-      || $map->[$x][$y-1] eq '\\'
-    ) {
-      if($map->[$x][$y-1] eq '\\') {
-        $lambda_remain-- ;
-        $lambda_count++ ;
-        $score += 25 ;
-      }
-      $map->[$x][$y] = ' ';
-      $map->[$x][$y-1] = 'R';
-      $new_loc = [$x, $y-1];
+    if($map->[$x][$y-1] =~ /[ .\\A-I]/) {
+      $robot_move_to->($x, $y-1);
     }
     if($map->[$x][$y-1] eq 'O') {
-      return {
-        %$world,
-        move_count    => $move_count,
-        ending        => 'WIN',
-        partial_score => $score,
-        bonus_score   => $lambda_count * 50,
-        score         => $score + $lambda_count * 50,
-      };
+      return $robot_win->();
     }
   }
   if($move eq 'R') {
-    if($map->[$x+1][$y] eq ' '
-      || $map->[$x+1][$y] eq '.'
-      || $map->[$x+1][$y] eq '\\'
-    ) {
-      if($map->[$x+1][$y] eq '\\') {
-        $lambda_remain-- ;
-        $lambda_count++ ;
-        $score += 25 ;
-      }
-      $map->[$x][$y] = ' ';
-      $map->[$x+1][$y] = 'R';
-      $new_loc = [$x+1, $y];
+    if($map->[$x+1][$y] =~ /[ .\\A-I]/) {
+      $robot_move_to->($x+1, $y);
     }
     if($map->[$x+1][$y] eq 'O') {
-      return {
-        %$world,
-        move_count    => $move_count,
-        ending        => 'WIN',
-        partial_score => $score,
-        bonus_score   => $lambda_count * 50,
-        score         => $score + $lambda_count * 50,
-      };
+      return $robot_win->();
     }
+
+    # Push boulder
     if($map->[$x+1][$y] =~ /[*+]/ && $map->[$x+2][$y] eq ' ') {
       $map->[$x][$y] = ' ';
       $map->[$x+1][$y] = 'R';
@@ -387,29 +364,13 @@ sub robot_move {
     }
   }
   if($move eq 'L') {
-    if($map->[$x-1][$y] eq ' '
-      || $map->[$x-1][$y] eq '.'
-      || $map->[$x-1][$y] eq '\\'
-    ) {
-      if($map->[$x-1][$y] eq '\\') {
-        $lambda_remain-- ;
-        $lambda_count++ ;
-        $score += 25 ;
-      }
-      $map->[$x][$y] = ' ';
-      $map->[$x-1][$y] = 'R';
-      $new_loc = [$x-1, $y];
+    if($map->[$x-1][$y] =~ /[ .\\A-I]/) {
+      $robot_move_to->($x-1, $y);
     }
     if($map->[$x-1][$y] eq 'O') {
-      return {
-        %$world,
-        move_count    => $move_count,
-        ending        => 'WIN',
-        partial_score => $score,
-        bonus_score   => $lambda_count * 50,
-        score         => $score + $lambda_count * 50,
-      };
+      return $robot_win->();
     }
+    # Push boulder
     if($map->[$x-1][$y] =~ /[*+]/ && $map->[$x-2][$y] eq ' ') {
       $map->[$x][$y] = ' ';
       $map->[$x-1][$y] = 'R';
