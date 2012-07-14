@@ -508,6 +508,7 @@ sub robot_move {
     %$world,
     move_count    => $move_count,
     map           => $map,
+    robot_loc_prev=> $robot_loc,
     robot_loc     => $new_loc,
     lambda_remain => $lambda_remain,
     lambda_count  => $lambda_count,
