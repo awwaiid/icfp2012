@@ -24,13 +24,13 @@ my $world = decode_json($input);
 # Now we use a GA to decide what moves to do
 my $moves = run_ga();
 
-use Data::Printer;
-p $moves;
-
-while(my $move = @$moves) {
+while(my $move = shift @$moves) {
+  print STDERR "Move: $move\n";
   print "$move\n";
   <>;
 }
+
+print "A\n" while 1;
 
 exit;
 
@@ -40,23 +40,14 @@ sub run_ga {
     -type       => 'listvector',
     -population => 100,
     -crossover  => 0.9,
-    -mutation   => 0.01,
+    -mutation   => 0.02,
   );
   $ga->init([
-    [qw/ U D L R W A /],
-    [qw/ U D L R W A /],
-    [qw/ U D L R W A /],
-    [qw/ U D L R W A /],
-    [qw/ U D L R W A /],
-    [qw/ U D L R W A /],
-    [qw/ U D L R W A /],
-    [qw/ U D L R W A /],
-    [qw/ U D L R W A /],
-    [qw/ U D L R W A /],
+    map { [qw/ U D L R W A /] } 0..20
   ]);
   $ga->evolve('rouletteTwoPoint', 10);
   my $best = $ga->getFittest;
-  print STDERR "Best score = " . $best->score . "\n";
+  print STDERR "\nBest score = " . $best->score . "\n";
   print STDERR "Best genes = " . join('',$best->genes) . "\n";
   return $best->genes();
 }
@@ -70,6 +61,7 @@ sub test_moves {
     $new_world = Lifter::world_update($new_world);
     $new_world = Lifter::check_ending($new_world);
   }
+  print STDERR $new_world->{score} . "\t";
   return $new_world->{score};
 }
 
