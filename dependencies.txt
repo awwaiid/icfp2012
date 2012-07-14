@@ -6,3 +6,4 @@ libfile-slurp-perl
 libjson-xs-perl
 libplack-perl
 
+liblocal-lib-perl

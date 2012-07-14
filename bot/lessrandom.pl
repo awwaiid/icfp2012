@@ -3,12 +3,12 @@
 use v5.10;
 use strict;
 use warnings;
-use IO::Scalar;
-use JSON::XS;
 use lib 'lib';
-use Lifter;
 use List::Util qw( max );
+use JSON::XS;
+use Lifter;
 
+use IO::Scalar;
 STDIN->autoflush(1);
 STDOUT->autoflush(1);
 
