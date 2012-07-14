@@ -28,7 +28,8 @@ my $total_score = 0;
 
 for my $mapname ( @maps ) {
     my $world = Lifter::load_world($mapname);
-    open2(my $bot_out, my $bot_in, $botname) or die "Error opening bot: $!";
+    my $pid = open2(my $bot_out, my $bot_in, $botname)
+      or die "Error opening bot: $!";
 
     my $alarm = 0;
     local $SIG{ALRM} = sub { $alarm = 1 };
