@@ -93,7 +93,7 @@ sub flip_map {
   my $height = scalar @{ $map->[0] };
   for(my $x = 0; $x < $width; $x++) {
     for(my $y = 0; $y < $height; $y++) {
-      if(!$direction) {
+      if($direction) {
         $new_map->[$height - $y - 1][$x] = $map->[$x][$y];
       } else {
         $new_map->[$x][$height - $y - 1] = $map->[$y][$x];
