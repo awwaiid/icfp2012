@@ -63,10 +63,11 @@ sub load_map {
 }
 
 sub load_world {
-  my $source = shift;
-  my ($map, $meta) = load_map($source);
-  my $robot_loc = get_robot_loc($map);
-  my $lambda_remain = get_lambda_remain($map);
+  my $source         = shift;
+  my ($map, $meta)   = load_map($source);
+  my $robot_loc      = get_robot_loc($map);
+  my $lambda_remain  = get_lambda_remain($map);
+  my $trampoline_loc = get_trampoline_loc($map);
   return {
     map             => $map, # array of map data
     robot_loc       => $robot_loc, # [$x,$y] of robot
@@ -81,6 +82,7 @@ sub load_world {
     flooding        => 0, # default flooding rate
     waterproof      => 10,# default waterproofing
     move_count      => 0, # simple count of moves
+    trampoline_loc  => $trampoline_loc, # Location of each trampoline
     %$meta,
   };
 }
@@ -170,6 +172,23 @@ sub get_lambda_remain {
   return $count;
 }
 
+sub get_trampoline_loc {
+  my $map = shift;
+
+  my $trampoline_loc = {};
+
+  my $width = scalar @$map;
+  my $height = scalar @{ $map->[0] };
+
+  for(my $y = 0; $y < $height; $y++) {
+    for(my $x = 0; $x < $width; $x++) {
+      $trampoline_loc->{$map->[$x][$y]} = [$x, $y]
+        if $map->[$x][$y] =~ /[A-I1-9]/;
+    }
+  }
+  return $trampoline_loc;
+}
+
 sub check_ending {
   my ($world) = @_;
   return $world if $world->{ending};
@@ -196,7 +215,7 @@ sub check_ending {
   $map = [
     map {
       [
-        map { s/\+/*/ ; $_ } @$_
+        map { s/[+]/*/ ; $_ } @$_
       ]
     }
     @$map
@@ -315,6 +334,24 @@ sub robot_move {
       $lambda_count++ ;
       $score += 25 ;
     }
+    if($map->[$i][$j] =~ /[A-I]/) {
+      my $trampoline = $map->[$i][$j];
+      my $trampoline_target = $world->{trampoline_forward}->{$trampoline};
+
+      # Set up our new destination
+      # use Data::Printer;
+      # p $trampoline_target;
+      # p $world->{trampoline_loc};
+      # p $world->{trampoline_loc}->{$trampoline_target};
+      ($i, $j) = @{ $world->{trampoline_loc}->{$trampoline_target} };
+
+      # Clear all origin trampolines, including original
+      foreach my $tramp (@{ $world->{trampoline_back}->{$trampoline_target} }) {
+        my ($tramp_x, $tramp_y) = @{ $world->{trampoline_loc}->{$tramp} };
+        $map->[$tramp_x][$tramp_y] = ' ';
+      }
+    }
+    print STDERR "Moving to $i,$j\n";
     $map->[$x][$y] = ' ';
     $map->[$i][$j] = 'R';
     $new_loc = [$i, $j];
