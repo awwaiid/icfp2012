@@ -1,0 +1,18 @@
+#!/usr/bin/env perl
+
+use lib '../lib';
+use v5.10;
+use strict;
+use warnings;
+use Data::Dumper;
+use Lifter;
+
+my $input = shift @ARGV;
+
+my $world = Lifter::json_to_world($input, 1);
+
+my $move = int (rand(4));
+if ($move == 0) { print 'U'; }
+if ($move == 1) { print 'D'; }
+if ($move == 2) { print 'L'; }
+if ($move == 3) { print 'R'; }

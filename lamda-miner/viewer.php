@@ -78,8 +78,6 @@ function generateMap($map_string) {
     return $out;
 }
 
-
-
 function generateMapFromJSON($world) {
     global $dead_miner;
     $symbol_image_map = array(
@@ -97,7 +95,7 @@ function generateMapFromJSON($world) {
     $map_array = $world_array['map'];
     $out = "";
     $row_count = count($map_array);
-    $water_row = 3; //$world_array['water'];
+    $water_row = $world_array['water'];
 
     foreach ($map_array as $key=>$row) {
 
