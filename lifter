@@ -56,7 +56,7 @@ if($ARGV[0] && -f $ARGV[0]) {
 
     # So slow
     if($world->{ending}) {
-      print $output . "A\n";
+      print "$output\n";
       exit;
     }
     # print "$output" . "A\n" && exit if eof $bot_out || $world->{ending};
@@ -69,7 +69,7 @@ if($ARGV[0] && -f $ARGV[0]) {
 
     # Force-abort if needed
     if($world->{ending}) {
-      print $output . "A\n";
+      print "$output\n";
       exit;
     }
   }
