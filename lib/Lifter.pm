@@ -351,7 +351,6 @@ sub robot_move {
         $map->[$tramp_x][$tramp_y] = ' ';
       }
     }
-    print STDERR "Moving to $i,$j\n";
     $map->[$x][$y] = ' ';
     $map->[$i][$j] = 'R';
     $new_loc = [$i, $j];
