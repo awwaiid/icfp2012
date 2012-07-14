@@ -42,7 +42,22 @@ sub load_map {
 
   my @meta_lines = split /\n/, $meta_lines;
   @meta_lines = map { chomp; $_ } @meta_lines;
+  my @trampoline_lines = grep { /^Trampoline/ } @meta_lines;
+  @meta_lines = grep { ! /^Trampoline/ } @meta_lines;
   my %meta = map { my ($k, $v) = split / /, $_; (lc $k, $v) } @meta_lines;
+
+  my $trampoline_forward = {};
+  my $trampoline_back    = {};
+
+  foreach my $trampoline_line (@trampoline_lines) {
+    if($trampoline_line =~ /^Trampoline ([A-I]) targets ([1-9])$/) {
+      my ($from, $to) = ($1, $2);
+      $trampoline_forward->{$from} = $to;
+      push @{ $trampoline_back->{$to} }, $from;
+    }
+  }
+  $meta{trampoline_forward} = $trampoline_forward;
+  $meta{trampoline_back}    = $trampoline_back;
 
   return ($map, \%meta);
 }
