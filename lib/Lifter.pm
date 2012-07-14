@@ -112,9 +112,9 @@ sub flip_map {
   for(my $x = 0; $x < $width; $x++) {
     for(my $y = 0; $y < $height; $y++) {
       if($direction) {
-        $new_map->[$height - $y - 1][$x] = $map->[$x][$y];
+        $new_map->[$height - $y - 1][$x] = $map->[$x][$y] // ' ';
       } else {
-        $new_map->[$x][$height - $y - 1] = $map->[$y][$x];
+        $new_map->[$x][$height - $y - 1] = $map->[$y][$x] // ' ';
       }
     }
   }
