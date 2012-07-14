@@ -19,7 +19,7 @@ exit unless $input;
 chomp $input;
 
 sub debug {
-  # return;
+  return;
   print STDERR $_ foreach @_;
 }
 
@@ -71,7 +71,7 @@ sub run_ga {
   # $ga->evolve('tournamentUniform', 50);
   # $ga->evolve('tournamentTwoPoint', 50);
   # $ga->evolve('tournamentSinglePoint', 50);
-  $ga->evolve('randomUniform', 20);
+  $ga->evolve('randomUniform', 50);
   my $best = $ga->getFittest;
   debug "\nBest score = " . $best->score . "\n";
   debug "Best genes = " . join('',$best->genes) . "\n";
