@@ -157,6 +157,7 @@ sub get_lambda_remain {
 
 sub check_ending {
   my ($world) = @_;
+  return $world if $world->{ending};
   my $map = $world->{map};
   my $robot_loc = $world->{robot_loc};
   my ($x, $y) = @$robot_loc;
@@ -190,6 +191,7 @@ sub check_ending {
 
 sub world_update {
   my $world      = shift;
+  return $world if $world->{ending};
   my $map        = $world->{map};
   my $new_map    = [];
   my $map_height = scalar @{$map->[0]};
@@ -278,6 +280,7 @@ sub world_update {
 
 sub robot_move {
   my ($world, $move) = @_;
+  return $world if $world->{ending};
   my $map = dclone($world->{map});
   my $robot_loc = $world->{robot_loc};
   my $lambda_remain = $world->{lambda_remain};
