@@ -79,8 +79,9 @@ sub world_to_json {
 sub json_to_world {
   my $json = shift;
   my $flip_map = shift || 0;
+  my $world = JSON::XS->new->decode($json);
   $world = flip_map($world) if $flip_map;
-  return JSON::XS->new->decode($json);
+  return $world;
 }
 
 sub flip_map {
