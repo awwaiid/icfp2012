@@ -321,7 +321,7 @@ sub world_update {
         $new_map->[$x][$y] = 'O';
       }
 
-      elsif($cell eq ' ' && $new_map->[$x][$y] eq 'W') {
+      elsif($cell eq ' ' && defined $new_map->[$x][$y] && $new_map->[$x][$y] eq 'W') {
         # New beard wins!
       }
 
@@ -331,15 +331,15 @@ sub world_update {
 
         if($cell eq 'W' && $do_grow_beard) {
           # Time to grow that beard!
-          say "Growing beard $x,$y";
+          # say "Growing beard $x,$y";
           for my $i (-1..1) {
             for my $j (-1..1) {
               my $xi = $x + $i;
               my $yj = $y + $j;
-              say "... checking $xi,$yj";
+              # say "... checking $xi,$yj";
               if($xi >= 0 && $xi < $map_width && $yj >= 0 && $yj < $map_height
                 && $map->[$xi][$yj] eq ' ') {
-                  say "... GROWING $xi,$yj";
+                  # say "... GROWING $xi,$yj";
                   $new_map->[$xi][$yj] = 'W';
               }
             }
@@ -374,6 +374,7 @@ sub robot_move {
   my $robot_loc = $world->{robot_loc};
   my $lambda_remain = $world->{lambda_remain};
   my $lambda_count = $world->{lambda_count};
+  my $razors = $world->{razors};
   my $score = $world->{score} - 1; # Lose one point!
   my $move_count = $world->{move_count} + 1;
   $move = uc $move;
@@ -388,6 +389,9 @@ sub robot_move {
       $lambda_remain-- ;
       $lambda_count++ ;
       $score += 25 ;
+    }
+    if($map->[$i][$j] eq '!') {
+      $razors++;
     }
     if($map->[$i][$j] =~ /[A-I]/) {
       my $trampoline = $map->[$i][$j];
@@ -423,7 +427,7 @@ sub robot_move {
   };
 
   if($move eq 'U') {
-    if($map->[$x][$y+1] =~ /[ .\\A-I]/) {
+    if($map->[$x][$y+1] =~ /[ .\\A-I!]/) {
       $robot_move_to->($x, $y+1);
     }
     if($map->[$x][$y+1] eq 'O') {
@@ -431,7 +435,7 @@ sub robot_move {
     }
   }
   if($move eq 'D') {
-    if($map->[$x][$y-1] =~ /[ .\\A-I]/) {
+    if($map->[$x][$y-1] =~ /[ .\\A-I!]/) {
       $robot_move_to->($x, $y-1);
     }
     if($map->[$x][$y-1] eq 'O') {
@@ -439,7 +443,7 @@ sub robot_move {
     }
   }
   if($move eq 'R') {
-    if($map->[$x+1][$y] =~ /[ .\\A-I]/) {
+    if($map->[$x+1][$y] =~ /[ .\\A-I!]/) {
       $robot_move_to->($x+1, $y);
     }
     if($map->[$x+1][$y] eq 'O') {
@@ -455,7 +459,7 @@ sub robot_move {
     }
   }
   if($move eq 'L') {
-    if($map->[$x-1][$y] =~ /[ .\\A-I]/) {
+    if($map->[$x-1][$y] =~ /[ .\\A-I!]/) {
       $robot_move_to->($x-1, $y);
     }
     if($map->[$x-1][$y] eq 'O') {
@@ -480,6 +484,25 @@ sub robot_move {
       score         => $score + $lambda_count * 25,
     };
   }
+  if($move eq 'S') {
+    if($razors > 0) {
+      $razors--;
+      for my $i (-1..1) {
+        for my $j (-1..1) {
+          my $xi = $x + $i;
+          my $yj = $y + $j;
+          # say "... checking $xi,$yj";
+          if($xi >= 0
+              && $yj >= 0
+              && defined $map->[$xi][$yj]
+              && $map->[$xi][$yj] eq 'W') {
+            # say "... GROWING $xi,$yj";
+            $map->[$xi][$yj] = ' ';
+          }
+        }
+      }
+    }
+  }
 
   return {
     %$world,
@@ -490,6 +513,7 @@ sub robot_move {
     lambda_count  => $lambda_count,
     partial_score => $score,
     score         => $score,
+    razors        => $razors,
   };
 }
 
