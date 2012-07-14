@@ -1,4 +1,5 @@
 <?php
+
 $dead_miner = false;
 if (isset($_POST['next_move'])) {
     $cmd = "./lifter2 '" . $_POST['old_world'] . "' " . $_POST['next_move'];
@@ -51,7 +52,7 @@ function generateState($state) {
     $out = "";
     foreach ($state_parts as $k => $r) {
         if (!in_array($k, array('score','lamda_count','robot_loc','lambda_remain','ending',
-        	'flooding_step', 'waterproof', 'waterproof_step', 'water', 'tramoline_loc','trampoline_forward','trampoline_back'))) continue;
+        	'flooding_step', 'waterproof', 'waterproof_step', 'water', 'trampoline_loc','trampoline_forward','trampoline_back', 'map'))) continue;
         if (is_array($r)) $r = json_encode($r);
         $out .= $k . ": " . $r . "<br />";
         if ($k == 'ending' && $r != 'WIN') {
@@ -121,7 +122,25 @@ function generateMapFromJSON($world) {
         '\\' => 'lambda.jpg',
         ' ' => 'empty.jpg',
         'O' => 'lift_open.jpg',
-        '+' => 'rock.jpg'
+        '+' => 'rock.jpg',
+        'A' => 'trampoline1.jpg',
+        'B' => 'trampoline2.jpg',
+        'C' => 'trampoline3.jpg',
+        'D' => 'trampoline4.jpg',
+        'E' => 'trampoline5.jpg',
+        'F' => 'trampoline6.jpg',
+        'G' => 'trampoline7.jpg',
+        'H' => 'trampoline8.jpg',
+        'I' => 'trampoline9.jpg',
+        '1' => 'target1.jpg',
+        '2' => 'target2.jpg',
+        '3' => 'target3.jpg',
+        '4' => 'target4.jpg',
+        '5' => 'target5.jpg',
+        '6' => 'target6.jpg',
+        '7' => 'target7.jpg',
+        '8' => 'target8.jpg',
+        '9' => 'target9.jpg'
     );
     $world_array = json_decode($world, true);
     $map_array = $world_array['map'];
@@ -137,7 +156,7 @@ function generateMapFromJSON($world) {
         if (ctype_space($row)) continue;
         $out .= "<div class='outer' style='display:block;clear:both' >";
         foreach ($row as $r) {
-            $symbol = isset($symbol_image_map[$r]) ? $symbol_image_map[$r] : 'dead_miner.jpg';
+            $symbol = isset($symbol_image_map[$r]) ? $symbol_image_map[$r] : 'empty.jpg';
             if ($symbol == 'miner.jpg' && $dead_miner == true) $symbol = 'dead_miner.jpg';
             $out .= "<div class='block'
             	style='" . $water_css ."float:left;padding:0;margin:0;height:60;width:60'>";
@@ -240,7 +259,7 @@ $(document).keydown(function(e){
 function playBot() {
     $.post("viewer.php", {play_bot:$("#play_bot").val(), old_world:$("#old_world").val()},
             function (data) {
-        alert (data.command + data.next_move);
+        //alert (data.command + data.next_move);
                 if (data.success == 1) {
                     sendMove(data.next_move, $("#old_world").val());
                 }
@@ -285,7 +304,7 @@ function playSeq() {
 <input id="abort" type="button" value="abort" onClick="abort(); return false;" />
 <input id="play_bot" type="text" value="phpbot.php" />
 <input id="submit_play_bot" type="submit" onClick="playBot(); return false;" value="Play Bot" />
-<input id="play_map" type="text" value="contest1" />
+<?php echo generateMapSelect(); ?>
 <input id="submit_play_map" type="submit" onClick="playMap(); return false;" value="Play Map" />
 <br />
 <input style="margin-left:25px;width:40px" id="down" type="button" value="down" onClick="down(); return false;" />
@@ -308,3 +327,17 @@ echo generateState($world);
 
 </body>
 </html>
+
+<?php
+
+function generateMapSelect() {
+    echo '<select id="play_map">';
+    $maps = scandir('../map');
+    foreach ($maps as $m) {
+        if (strpos($m, 'map')) {
+            echo '<option value="' . $m . '">' . $m . '</option>';
+        }
+    }
+    echo '</select>';
+}
+
