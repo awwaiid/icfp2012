@@ -107,8 +107,14 @@ sub flip_map {
   my $direction = shift;
   my $map = $world->{map};
   my $new_map = [];
-  my $width = scalar @$map;
-  my $height = scalar @{ $map->[0] };
+  my ($width, $height);
+  if($direction) {
+    $width = scalar @$map;
+    $height = scalar @{ $map->[0] };
+  } else {
+    $height = scalar @$map;
+    $width = scalar @{ $map->[0] };
+  }
   for(my $x = 0; $x < $width; $x++) {
     for(my $y = 0; $y < $height; $y++) {
       if($direction) {
