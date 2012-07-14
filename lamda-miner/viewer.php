@@ -83,8 +83,6 @@ function generateMapFromJSON($world) {
     $world_array = json_decode($world, true);
     $map_array = $world_array['map'];
     $out = "";
-    //var_dump ($world);
-    //var_dump ($world_array);
     foreach ($map_array as $row) {
         if (ctype_space($row)) continue;
         $out .= "<div class='outer' style='display:block;clear:both' >";
@@ -113,12 +111,6 @@ $map_string = "
 #....\ \#
 #########
 ";
-
-$world = '{"waterproof_step":0,"waterproof":10,"bonus_score":0,"partial_score":0,"lambda_remain":8,"score":0,"water":0,' .
-		 '"map":[["#","#","#","#","#","#","#","#","#"," "],["#",".",".",".",".",".",".",".","#"," "],["#",".",".",".","\\\","R"," ","*","#"," "],' .
-        '["#",".",".","\\\"," "," ",".",".","#"," "],["#",".","\\\"," "," ",".",".",".","#"," "],["#","\\\"," "," ",".","#","#","#","#"," "],' .
-        '["#"," "," ",".",".","#","\\\","\\\","#"," "],["#","\\\","#",".",".",".",".",".","#"," "],["#","#","#","#","#","#","L","#","#"," "]],' .
-       	'"flooding":0,"flooding_step":0,"robot_loc":[2,5],"lambda_count":0}';
 
 $world = '
 {"waterproof_step":0,"waterproof":10,"bonus_score":0,"lambda_remain":8,"partial_score":0,"score":0,"water":0,"map":[["#","#","#","#","#","#","#","#","#"],["#",".","*",".",".","#","\\\",".","#"],["#",".","\\\",".",".","#","\\\",".","L"],["#",".","R"," ",".","#","#",".","#"],["#",".","\\\"," "," ",".",".",".","#"],["#",".",".","\\\"," "," ",".",".","#"],["#",".",".",".","\\\"," "," ","#","#"],["#",".",".",".",".","\\\"," ","\\\","#"],["#","#","#","#","#","#","#","#","#"]],"flooding":0,"flooding_step":0,"robot_loc":[2,5],"lambda_count":0}
@@ -187,6 +179,16 @@ $(document).keydown(function(e){
     }
 });
 
+function playBot(bot) {
+    $.post("viewer.php", {play_bot:bot, old_world:$("#old_world").val()},
+            function (data) {
+                if (data.success == 1) {
+                    sendMove(data.next_move, $("#old_world").val());
+                }
+            }, "json");
+        return false;
+
+}
 
 </script>
 
@@ -202,6 +204,9 @@ $(document).keydown(function(e){
 <input id="left" type="button" value="left" onClick="left(); return false;" />
 <input id="wait" type="button" value="wait" onClick="wait(); return false;" />
 <input id="abort" type="button" value="abort" onClick="abort(); return false;" />
+<input id="play_bot" type="text" value="" />
+<input id="submit_play_bot" type="submit" onClick="playBot(); return false;" value="Play Bot" />
+
 
 <div id="map_container">
 <?php
