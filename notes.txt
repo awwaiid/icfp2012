@@ -23,3 +23,31 @@ E.G.
 
 ./manager -b bot/genie.pl -m map/contest1.map -t 5
 
+-----------------
+
+Bot strategies
+
+* Random
+** Literally select a move at random
+** Better than nothing... well... sometimes
+
+* Scaredy
+** Check immediate moves for lambdas
+** If there is one near you, go there
+** Abort if there is no lambda one move away
+
+* N-look-ahead
+** Try every combination N deep
+** Select path with max score
+
+* Path Finding
+** Given a destination, return a set of steps to get there
+** A* Algorithm?
+
+* Genetic Algorithm
+** Better than random!
+** Attempts N moves, searches for maximal score using population-generation search
+** OK for short term
+** Gets into local maxima easily -- not good for tricky problems
+
+
