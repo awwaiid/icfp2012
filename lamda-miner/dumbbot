@@ -11,15 +11,18 @@ my $input = shift @ARGV;
 
 my $world = Lifter::json_to_world($input, 1);
 
-open(my $file, '>>', 'log.txt') ; print $file "log message\n";
+
+
 
 my $count = 0;
-while ($count < 100) {
+while ($count < 0) {
 $count++;
 open(my $file, '>>', 'log.txt') ; print $file "log message\n";
 
 }
 
+
+print "R";
 
 
 
@@ -30,3 +33,11 @@ open(my $file, '>>', 'log.txt') ; print $file "log message\n";
 # if ($move == 2) { print 'L'; }
 # if ($move == 3) { print 'R'; }
 
+sub find_closest {
+my $world = shift;
+
+f
+
+return $coord;
+
+}

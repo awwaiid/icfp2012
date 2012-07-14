@@ -8,8 +8,6 @@ use Data::Dumper;
 use Lifter;
 
 my $input = shift @ARGV;
-my $map_string = uri_unescape($input);
-$map_string =~ s/\+/ /gms;
 my $world = Lifter::json_to_world($input,1);
 
 my $move = shift @ARGV;

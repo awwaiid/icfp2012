@@ -3,10 +3,8 @@ $dead_miner = false;
 if (isset($_POST['next_move'])) {
     $cmd = "./lifter2 '" . $_POST['old_world'] . "' " . $_POST['next_move'];
     $shell_return = shell_exec($cmd);
-    //$shell_return_parts = explode("\n\n", $shell_return);
     $generated_state = generateState($shell_return);
     $generated_map = generateMapFromJSON($shell_return);
-    //sleep (1);
     $return = array(
         'success'=>1,
         'state'=>$shell_return,
@@ -215,7 +213,7 @@ $(document).keydown(function(e){
         down();
         return false;
     }
-    if (e.keyCode == 66) {
+    if (e.keyCode == 48) {
         playBot();
         return false;
     }
@@ -267,7 +265,7 @@ function playSeq() {
 <input id="left" style="width:40px" type="button" value="left" onClick="left(); return false;" />
 <input id="wait" type="button" value="wait" onClick="wait(); return false;" />
 <input id="abort" type="button" value="abort" onClick="abort(); return false;" />
-<input id="play_bot" type="text" value="dumbbot" />
+<input id="play_bot" type="text" value="phpbot.php" />
 <input id="submit_play_bot" type="submit" onClick="playBot(); return false;" value="Play Bot" />
 <input id="play_map" type="text" value="contest1" />
 <input id="submit_play_map" type="submit" onClick="playMap(); return false;" value="Play Map" />
