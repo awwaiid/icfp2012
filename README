@@ -1,0 +1,13 @@
+ICFP Contest 2012
+
+Team Name: I Eval My Kitty
+
+Members:
+* lungching - Mike Burns
+* borbyu - Jason Woys
+* awwaiid - Brock Wilcox
+
+Our current bot uses AI::Genetic to evolve a list of moves to deal with
+the current board. We expect that this will become more complex for the
+non-lightning round :)
+
