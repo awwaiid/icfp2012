@@ -8,37 +8,42 @@ use IPC::Open2;
 
 use Lifter;
 
-my $botname = shift;
-my $mapname = shift;
+my $botname     = shift;
+my @maps        = @ARGV;
+my $total_score = 0;
 
-my $world = Lifter::load_world($mapname);
-open2(my $bot_out, my $bot_in, $botname) or die "Error opening bot: $!";
+for my $mapname ( @maps ) {
+    my $world = Lifter::load_world($mapname);
+    open2(my $bot_out, my $bot_in, $botname) or die "Error opening bot: $!";
 
-my $alarm = 0;
-local $SIG{ALRM} = sub { $alarm = 1 };
-alarm 1; # timeout!
+    my $alarm = 0;
+    local $SIG{ALRM} = sub { $alarm = 1 };
+    alarm 1; # timeout!
 
-while(1) {
-  Lifter::print_map $world;
-  print $bot_in Lifter::world_to_json($world);
-  print $bot_in "\n";
+    while(1) {
+      Lifter::print_map $world;
+      print $bot_in Lifter::world_to_json($world);
+      print $bot_in "\n";
 
-  my $move = <$bot_out>;
-  chomp $move;
-  $world = Lifter::robot_move($world, $move);
-  print_ending($world) if $world->{ending};
-  $world = Lifter::check_ending($world);
-  print_ending($world) if $world->{ending};
-  $world = Lifter::world_update($world);
-  print_ending($world) if $world->{ending};
-  $world = Lifter::check_ending($world);
-  print_ending($world) if $world->{ending};
+      my $move = <$bot_out>;
+      chomp $move;
+      $world = Lifter::robot_move($world, $move);
+      print_ending($world) if $world->{ending};
+      $world = Lifter::check_ending($world);
+      print_ending($world) if $world->{ending};
+      $world = Lifter::world_update($world);
+      print_ending($world) if $world->{ending};
+      $world = Lifter::check_ending($world);
+      print_ending($world) if $world->{ending};
 
-  if($alarm) {  
-    $world->{ending} = 'TIME';
-    print_ending($world);
-  }
+      if($alarm) {  
+        $world->{ending} = 'TIME';
+        print_ending($world);
+      }
+    }
 }
+
+say "Final score: $total_score";
 
 sub print_ending {
   my $world = shift;
@@ -46,5 +51,6 @@ sub print_ending {
   say "Partial score: $world->{partial_score}";
   say "Bonus score: $world->{bonus_score}";
   say "Final score: $world->{score}";
-  exit;
+  $total_score += $world->{score};
+  last;
 }
