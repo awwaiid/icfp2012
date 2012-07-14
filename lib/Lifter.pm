@@ -236,7 +236,7 @@ sub world_update {
   my $new_map    = [];
   my $map_height = scalar @{$map->[0]};
   my $map_width  = scalar @{$map};
-  
+
   my $waterproof_step = $world->{waterproof_step};
   my $flooding_step   = $world->{flooding_step};
   my $water           = $world->{water};

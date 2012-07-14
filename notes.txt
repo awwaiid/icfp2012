@@ -50,4 +50,7 @@ Bot strategies
 ** OK for short term
 ** Gets into local maxima easily -- not good for tricky problems
 
+* Start out, work you way in
+** Find the lambda(s) farthest away from lift and work way toward lift
+
 

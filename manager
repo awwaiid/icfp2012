@@ -14,15 +14,18 @@ my $botname;
 my @maps;
 my $verbose;
 my $timeout;
+my $warn_time;
 
 my $result = GetOptions(
     'bot=s'     => \$botname,
     'verbose'   => \$verbose,
     'maps=s{,}' => \@maps,
     'time=s'    => \$timeout,
+    'warn-time=i' => \$warn_time,
 );
 
 $timeout ||= 1;
+$warn_time = 1 if ! $warn_time || $warn_time < 0;
 
 my $total_score = 0;
 
@@ -33,6 +36,7 @@ for my $mapname ( @maps ) {
 
     my $alarm = 0;
     local $SIG{ALRM} = sub { $alarm = 1 };
+    local $SIG{INT} = sub { };
     alarm $timeout; # timeout!
 
     while(1) {
@@ -55,6 +59,9 @@ for my $mapname ( @maps ) {
         print_ending($mapname, $world);
         last;
       }
+
+      kill 2, $pid if ! $warn_time;
+      $warn_time-- if $warn_time > 0;
     }
 }
 
