@@ -46,3 +46,9 @@ Pushing 2am here... getting a bit tired. But I'm trying to wrap up our current m
 
 I got a local PHP instance going to play with Jason's visualizer. I will hook that up to the GA bot soon.
 
+2012.07.14.18.05 - Mike
+
+* Updated manager to take --warn-time <int> so that it will send a sig int at the time to simulate the sig int given 150 seconds into running in the contest
+* Updated look ahead bot to only use l, r, u, and d and to abort when it gets the warning that time is running out
+* Beards were added to caves
+
