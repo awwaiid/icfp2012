@@ -13,6 +13,7 @@ if($ARGV[0] && -f $ARGV[0]) {
   while(1) {
     Lifter::print_map $world;
     say "Water level: $world->{water} Flooding: $world->{flooding_step}/$world->{flooding} Waterproof: $world->{waterproof_step}/$world->{waterproof}" if $world->{flooding};
+    say "Beard growth: $world->{growth_step}/$world->{growth}";
     say "Score: $world->{score}";
     print "Enter move: ";
     my $move = <>;

@@ -83,6 +83,9 @@ sub load_world {
     waterproof      => 10,# default waterproofing
     move_count      => 0, # simple count of moves
     trampoline_loc  => $trampoline_loc, # Location of each trampoline
+    growth          => 25,# beard growth rate
+    growth_step     => 0, # current growth step
+    razors          => 0, # default current razor count
     %$meta,
   };
 }
@@ -263,6 +266,17 @@ sub world_update {
     }
   }
 
+  # Update beard growth level
+  my $growth_step = $world->{growth_step};
+  my $do_grow_beard = 0;
+  if($world->{growth} > 0) {
+    $growth_step++;
+    if($growth_step >= $world->{growth}) {
+      $do_grow_beard = 1;
+      $growth_step = 0;
+    }
+  }
+
   for(my $y = 0; $y < $map_height; $y++) {
     for(my $x = 0; $x < $map_width; $x++) {
 
@@ -307,9 +321,30 @@ sub world_update {
         $new_map->[$x][$y] = 'O';
       }
 
+      elsif($cell eq ' ' && $new_map->[$x][$y] eq 'W') {
+        # New beard wins!
+      }
+
       # All other cases... cell remains!
       else {
         $new_map->[$x][$y] = $cell;
+
+        if($cell eq 'W' && $do_grow_beard) {
+          # Time to grow that beard!
+          say "Growing beard $x,$y";
+          for my $i (-1..1) {
+            for my $j (-1..1) {
+              my $xi = $x + $i;
+              my $yj = $y + $j;
+              say "... checking $xi,$yj";
+              if($xi >= 0 && $xi < $map_width && $yj >= 0 && $yj < $map_height
+                && $map->[$xi][$yj] eq ' ') {
+                  say "... GROWING $xi,$yj";
+                  $new_map->[$xi][$yj] = 'W';
+              }
+            }
+          }
+        }
 
         # Update robot drowning
         if($cell eq 'R' && $world->{flooding} > 0) {
@@ -328,6 +363,7 @@ sub world_update {
     water           => $water,
     waterproof_step => $waterproof_step,
     flooding_step   => $flooding_step,
+    growth_step     => $growth_step,
   };
 }
 
