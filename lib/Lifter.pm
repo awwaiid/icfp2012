@@ -163,6 +163,19 @@ sub get_robot_loc {
   }
 }
 
+sub get_lift_loc {
+  my $map = shift;
+
+  my $width = scalar @$map;
+  my $height = scalar @{ $map->[0] };
+
+  for(my $y = 0; $y < $height; $y++) {
+    for(my $x = 0; $x < $width; $x++) {
+      return [$x, $y] if $map->[$x][$y] eq 'O' || $map->[$x][$y] eq 'L';
+    }
+  }
+}
+
 sub get_lambda_remain {
   my $map = shift;
 

@@ -65,13 +65,14 @@ sub run_ga {
     -mutation   => 0.02,
   );
   $ga->init([
-    map { [qw/ U U D D L L R R W A /] } 0..100
+    map { [qw/ U D L R W A /] } 0..50
   ]);
-  # $ga->evolve('rouletteTwoPoint', 50);
+  # $ga->evolve('rouletteTwoPoint', 1000);
   # $ga->evolve('tournamentUniform', 50);
-  # $ga->evolve('tournamentTwoPoint', 50);
+  # $ga->evolve('tournamentTwoPoint', 1000);
   # $ga->evolve('tournamentSinglePoint', 50);
   $ga->evolve('randomUniform', 20);
+  # $ga->evolve('randomSinglePoint', 1000);
   my $best = $ga->getFittest;
   debug "\nBest score = " . $best->score . "\n";
   debug "Best genes = " . join('',$best->genes) . "\n";
@@ -92,7 +93,12 @@ sub test_moves {
   # my $path_bonus = get_path_bonus($new_world);
 
   debug $new_world->{score} . "\t";
-  return $new_world->{score};
+  my ($x, $y) = @{$new_world->{robot_loc}};
+  my ($i, $j) = @{Lifter::get_lift_loc($new_world->{map})};
+
+  # my $dist = sqrt( ($x - $i) ** 2 + ($y - $j) ** 2 );
+  # debug "Distance $dist\n";
+  return $new_world->{score}; # - ($dist * 10);
 }
 
 
