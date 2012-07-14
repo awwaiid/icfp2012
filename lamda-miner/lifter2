@@ -13,7 +13,7 @@ my $input = shift @ARGV;
 #$map_string =~ s/\+/ /gms;
 # print "map_string: [$map_string]\n";
 #my $world = Lifter::load_world($map_string);
-my $world = Lifter::json_to_world($input);
+my $world = Lifter::json_to_world($input,1);
 my $move = shift @ARGV;
 
 

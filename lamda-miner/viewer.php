@@ -22,7 +22,7 @@ function generateState($state) {
     global $dead_miner;
     $state_parts = json_decode($state, true);
     $out = "";
-    foreach ($state_parts as $k=>$r) {
+    foreach ($state_parts as $k => $r) {
         if (!in_array($k, array('score','lamda_count','robot_loc','lambda_remain','ending',
         	'flooding_step', 'waterproof', 'waterproof_step'))) continue;
         if (is_array($r)) $r = json_encode($r);
