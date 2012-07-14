@@ -6,7 +6,7 @@ if (isset($_POST['next_move'])) {
     //$shell_return_parts = explode("\n\n", $shell_return);
     $generated_state = generateState($shell_return);
     $generated_map = generateMapFromJSON($shell_return);
-
+    //sleep (1);
     $return = array(
         'success'=>1,
         'state'=>$shell_return,
@@ -25,6 +25,22 @@ if (isset($_POST['play_bot'])) {
     $return = array(
         'success'=>1,
         'next_move'=>$shell_return,
+        'command'=>$cmd
+    );
+    echo json_encode($return);
+    exit;
+}
+
+if (isset($_POST['play_map'])) {
+    $cmd = "./get_initial_map.pl " . $_POST['play_map'];
+    $shell_return = shell_exec($cmd);
+    $generated_state = generateState($shell_return);
+    $generated_map = generateMapFromJSON($shell_return);
+    $return = array(
+        'success' => 1,
+        'map_json'=>$shell_return,
+        'generated_map'=>$generated_map,
+        'generated_state'=>$generated_state,
         'command'=>$cmd
     );
     echo json_encode($return);
@@ -168,6 +184,8 @@ function abort() {
 }
 
 function sendMove(move, world) {
+    $.ajaxSetup({async: false});
+
     $.post("viewer.php", {next_move:move, old_world:world},
         function (data) {
             //alert(data.command);
@@ -215,6 +233,28 @@ function playBot() {
 
 }
 
+function playMap() {
+    $.post("viewer.php", {play_map:$("#play_map").val()},
+            function (data) {
+        //alert (data.command);
+                if (data.success == 1) {
+                    $("#map_container").html(data.generated_map);
+                    $("#state_container").html(data.generated_state);
+                }
+            }, "json");
+        return false;
+
+}
+
+function playSeq() {
+    var str = $("#play_seq").val();
+    var moves = str.replace(/,\s+/g, ',').split(',');
+    for(i=0; i<moves.length; i++) {
+    	sendMove(moves[i], $("#old_world").val());
+    }
+    return false;
+}
+
 </script>
 
 <title>lamda miner viewer</title>
@@ -229,11 +269,13 @@ function playBot() {
 <input id="abort" type="button" value="abort" onClick="abort(); return false;" />
 <input id="play_bot" type="text" value="dumbbot" />
 <input id="submit_play_bot" type="submit" onClick="playBot(); return false;" value="Play Bot" />
-<input id="play_map" type="text" value="" />
+<input id="play_map" type="text" value="contest1" />
 <input id="submit_play_map" type="submit" onClick="playMap(); return false;" value="Play Map" />
 <br />
 <input style="margin-left:25px;width:40px" id="down" type="button" value="down" onClick="down(); return false;" />
-
+<br />
+<input type="text" style="width:500" id="play_seq" value="" />
+<input type="submit" id="submit_play_seq" value="Play Sequence" onClick="playSeq(); return false;" />
 <div id="map_container">
 <?php
 
