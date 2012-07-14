@@ -44,11 +44,8 @@ for my $mapname ( @maps ) {
       my $move = <$bot_out>;
       chomp $move;
       $world = Lifter::robot_move($world, $move);
-      print_ending($mapname, $world) && last if $world->{ending};
       $world = Lifter::check_ending($world);
-      print_ending($mapname, $world) && last if $world->{ending};
       $world = Lifter::world_update($world);
-      print_ending($mapname, $world) && last if $world->{ending};
       $world = Lifter::check_ending($world);
       print_ending($mapname, $world) && last if $world->{ending};
 
