@@ -4,11 +4,11 @@ use lib 'lib';
 use v5.10;
 use strict;
 use warnings;
-use Data::Dumper;
+use IPC::Open2;
 use Lifter;
 
 my $moves = '';
-if(-f $ARGV[0]) {
+if($ARGV[0] && -f $ARGV[0]) {
   my $world = Lifter::load_world(shift @ARGV);
   while(1) {
     Lifter::print_map $world;
@@ -27,12 +27,54 @@ if(-f $ARGV[0]) {
     $world = Lifter::check_ending($world);
     print_ending($world) if $world->{ending};
   }
+
 } else {
+
   # Contest-mode
   my $world = Lifter::load_world(\*STDIN);
+  # my $botname = 'bot/genie.pl';
+  my $botname = 'bot/random.pl';
+  my $output = '';
 
-  # ...
+  local $SIG{INT} = sub {
+    print "$output" . "A\n";
+    exit;
+  };
+
+  open2(my $bot_out, my $bot_in, $botname) or die "Error opening bot: $!";
+  while(1) {
+
+    # Send the bot the world
+    print $bot_in Lifter::world_to_json($world);
+    print $bot_in "\n";
+
+    # Get the next move from the bot
+    my $move = <$bot_out>;
+    chomp $move;
+
+    $output .= $move;
+
+    # So slow
+    if($world->{ending}) {
+      print $output . "A\n";
+      exit;
+    }
+    # print "$output" . "A\n" && exit if eof $bot_out || $world->{ending};
+
+    # Simulate the world
+    $world = Lifter::robot_move($world, $move);
+    $world = Lifter::check_ending($world);
+    $world = Lifter::world_update($world);
+    $world = Lifter::check_ending($world);
+
+    # Force-abort if needed
+    if($world->{ending}) {
+      print $output . "A\n";
+      exit;
+    }
+  }
 }
+
 
 sub print_ending {
   my $world = shift;

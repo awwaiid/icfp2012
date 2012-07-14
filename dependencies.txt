@@ -1,10 +1,9 @@
-CPAN:
-File::Slurp
+Not really:
+libplack-perl
 
 Apt:
 libfile-slurp-perl
 libjson-xs-perl
-libplack-perl
-
 liblocal-lib-perl
 libdata-printer-perl
+
