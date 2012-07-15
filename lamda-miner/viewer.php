@@ -51,7 +51,7 @@ function generateState($state) {
     $state_parts = json_decode($state, true);
     $out = "";
     foreach ($state_parts as $k => $r) {
-        if (!in_array($k, array('score','lamda_count','robot_loc','lambda_remain','ending', 'move_count',
+        if (!in_array($k, array('score','lamda_count','robot_loc','lambda_remain','ending', 'move_count', 'razors', 'robot_loc_prev',
         	'flooding_step', 'waterproof', 'waterproof_step', 'water', 'trampoline_loc','trampoline_forward','trampoline_back', 'map'))) continue;
         if (is_array($r)) $r = json_encode($r);
         $out .= $k . ": " . $r . "<br />";
@@ -140,7 +140,9 @@ function generateMapFromJSON($world) {
         '6' => 'target6.jpg',
         '7' => 'target7.jpg',
         '8' => 'target8.jpg',
-        '9' => 'target9.jpg'
+        '9' => 'target9.jpg',
+        'W' => 'beard.jpg',
+        '!' => 'razor.jpg'
     );
     $world_array = json_decode($world, true);
     $map_array = $world_array['map'];
@@ -218,12 +220,16 @@ function abort() {
     sendMove('A', $("#old_world").val());
 }
 
+function shave() {
+    sendMove('S', $("#old_world").val());
+}
+
 function sendMove(move, world) {
     $.ajaxSetup({async: false});
 
     $.post("viewer.php", {next_move:move, old_world:world},
         function (data) {
-            alert(data.command);
+            //alert(data.command);
             if (data.success == 1) {
                 $("#map_container").html(data.generated_map);
                 $("#state_container").html(data.generated_state);
@@ -256,6 +262,10 @@ $(document).keydown(function(e){
     }
     if (e.keyCode == 57) { // 9
         abort();
+        return false;
+    }
+    if (e.keyCode == 56) { // 8
+        shave();
         return false;
     }
 });
@@ -302,10 +312,11 @@ function playSeq() {
 <body>
 <input style="margin-left:25px;width:40px" id="up" type="button" value="up" onClick="up(); return false;" />
 <br />
-<input id="right" style="width:40px" type="button" value="right" onClick="right(); return false;" />
 <input id="left" style="width:40px" type="button" value="left" onClick="left(); return false;" />
+<input id="right" style="width:40px" type="button" value="right" onClick="right(); return false;" />
 <input id="wait" type="button" value="wait" onClick="wait(); return false;" />
 <input id="abort" type="button" value="abort" onClick="abort(); return false;" />
+<input id="shave" type="button" value="shave" onClick="shave(); return false;" />
 <input id="play_bot" type="text" value="phpbot.php" />
 <input id="submit_play_bot" type="submit" onClick="playBot(); return false;" value="Play Bot" />
 <?php echo generateMapSelect(); ?>

@@ -53,12 +53,14 @@ class Strategy {
             if ($best == $origin->left()) $dir = 'L';
         }
         if ($dir == $bad_direction) {
-            $GLOBALS['log']->lwrite($dir);
             if ($dir == 'R') $dir = 'D';
             if ($dir == 'L') $dir = 'U';
             if ($dir == 'D') $dir = 'L';
             if ($dir == 'U') $dir = 'R';
+
         }
+
+        $GLOBALS['log']->lwrite($dir);
         return $dir;
     }
 
