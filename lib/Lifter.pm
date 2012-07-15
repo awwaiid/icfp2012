@@ -219,7 +219,7 @@ sub check_ending {
   my $map = $world->{map};
   my $robot_loc = $world->{robot_loc};
   my ($x, $y) = @$robot_loc;
-  if($map->[$x][$y+1] =~ /\+\|/) {
+  if($map->[$x][$y+1] =~ /[+|]/) {
     return {
       %$world,
       partial_score => $world->{score},
