@@ -11,7 +11,7 @@ class Map {
         $arr = json_decode($json, true);
         $height = count($arr);
         $width = isset($arr[0]) ? count($arr[0]) : 0;
-        $this->setDimensions(array($height, $width));
+        $this->setDimensions(array($width, $height));
         $this->setRows($arr);
     }
 

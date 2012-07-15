@@ -8,7 +8,7 @@ while ($line = fgets($f)) {
     //fwrite (STDERR, $line . "\n");
 
     if (!empty($move_queue)) {
-        fwrite(STDERR, implode(',', $move_queue) . "\n");
+        //fwrite(STDERR, implode(',', $move_queue) . "\n");
         $dir = array_shift($move_queue);
         //fwrite(STDERR, $dir . "\n");
         fwrite(STDOUT, $dir . "\n");
@@ -41,7 +41,7 @@ while ($line = fgets($f)) {
     }
     else {
         // make first move.
-        fwrite(STDERR, implode(',', $move_queue) . "\n");
+        //fwrite(STDERR, implode(',', $move_queue) . "\n");
         $dir = array_shift($move_queue);
     }
     //fwrite(STDERR, $dir . "\n");

@@ -21,7 +21,7 @@ class Strategy {
         $target_lamda = null;
         foreach ($lamdas as $l) {
             $d = MathFacade::findMDistanceBetweenTwoPositions($origin, $l);
-            //$GLOBALS['log']->lwrite($d);
+            $GLOBALS['log']->lwrite($origin . '-' . $l . '-' . $d);
             if (!$least_dist || $d < $least_dist) {
                 $least_dist = $d;
                 $target_lamda = $l;
