@@ -19,12 +19,7 @@ if($ARGV[0] && -f $ARGV[0]) {
     my $move = <>;
     chomp $move;
     $moves .= $move;
-    $world = Lifter::robot_move($world, $move);
-    print_ending($world) if $world->{ending};
-    $world = Lifter::check_ending($world);
-    print_ending($world) if $world->{ending};
-    $world = Lifter::world_update($world);
-    print_ending($world) if $world->{ending};
+    $world = Lifter::eval_move($world, $move);
     $world = Lifter::check_ending($world);
     print_ending($world) if $world->{ending};
   }
@@ -62,10 +57,7 @@ if($ARGV[0] && -f $ARGV[0]) {
     # print "$output" . "A\n" && exit if eof $bot_out || $world->{ending};
 
     # Simulate the world
-    $world = Lifter::robot_move($world, $move);
-    $world = Lifter::check_ending($world);
-    $world = Lifter::world_update($world);
-    $world = Lifter::check_ending($world);
+    $world = Lifter::eval_move( $world, $move);
 
     # Force-abort if needed
     if($world->{ending}) {

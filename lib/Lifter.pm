@@ -7,6 +7,8 @@ use File::Slurp;
 use Storable qw( dclone );
 use JSON::XS;
 use List::Util qw( max );
+# use Memoize;
+# memoize( 'eval_move' );
 
 sub load_map {
   my $source = shift;
@@ -521,5 +523,27 @@ sub robot_move {
   };
 }
 
+{
+    my %cache;
+
+    sub eval_move {
+        my $world = shift;
+        my $move = shift;
+
+        my $key = world_to_json( $world) . $move;
+        if ( $cache{ $key } ) {
+            return $cache{ $key };
+        }
+        else {
+            $world = Lifter::robot_move($world, $move);
+            $world = Lifter::check_ending($world);
+            $world = Lifter::world_update($world);
+            $world = Lifter::check_ending($world);
+
+            $cache{ $key } = $world;
+            return $world;
+        }
+    }
+}
 1;
 
