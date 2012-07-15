@@ -19,10 +19,19 @@ class Strategy {
         $least_dist = null;
         $target_lamda = null;
         foreach ($lamdas as $l) {
-            $d = MathFacade::findDistanceBetweenTwoPositions($origin, $l);
+            $d = MathFacade::findMDistanceBetweenTwoPositions($origin, $l);
+            $GLOBALS['log']->lwrite($d);
             if (!$least_dist || $d < $least_dist) {
                 $least_dist = $d;
                 $target_lamda = $l;
+            }
+            if ($d == $least_dist && !is_null($target_lamda)) {
+                $d2 = MathFacade::findMDistanceBetweenTwoPositions($l, WorldFacade::findLift($this->world->getMap()));
+                $d3 = MathFacade::findMDistanceBetweenTwoPositions($target_lamda, WorldFacade::findLift($this->world->getMap()));
+                if ($d2 > $d3) {
+                    $target_lamda = $l;
+                    $least_dist = $d;
+                }
             }
         }
         return $target_lamda;
@@ -52,15 +61,15 @@ class Strategy {
             if ($best == $origin->right()) $dir = 'R';
             if ($best == $origin->left()) $dir = 'L';
         }
+
         if ($dir == $bad_direction) {
             if ($dir == 'R') $dir = 'D';
-            if ($dir == 'L') $dir = 'U';
-            if ($dir == 'D') $dir = 'L';
-            if ($dir == 'U') $dir = 'R';
-
+            else if ($dir == 'L') $dir = 'U';
+            else if ($dir == 'D') $dir = 'R';
+            else if ($dir == 'U') $dir = 'L';
         }
 
-        $GLOBALS['log']->lwrite($dir);
+        $GLOBALS['log']->lwrite($dir . "-" . $bad_direction . "-" . $origin . "-" . $target);
         return $dir;
     }
 

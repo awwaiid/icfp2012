@@ -34,6 +34,19 @@ class WorldFacade {
         return false;
     }
 
+    public static function findLift(Map $map) {
+        foreach ($map->getRows() as $y=>$row) {
+            if (in_array("O", $row) || in_array("L", $row)) {
+                foreach ($row as $x=>$r) {
+                    if ($r == "O" || $r == "L") {
+                        return self::getCoord($x, $y, $map->getDimensions());
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public static function whatIsAt(Map $map, $coord) {
         $rows = $map->getRows();
         return $rows[$coord->y][$coord->x];

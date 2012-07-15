@@ -30,6 +30,9 @@ class World {
         $this->setFlooding($arr['flooding']);
         $this->setFloodingStep($arr['flooding_step']);
         $this->setRobotLoc($arr['robot_loc']);
+        if (!$this->getRobotLoc() instanceof Position) {
+            throw new Exception('Must be a Position object');
+        }
         $this->setLamdaCount($arr['lambda_count']);
         $map = new Map(json_encode($arr['map']));
         $this->setMap($map);
