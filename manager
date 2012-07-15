@@ -15,13 +15,15 @@ my @maps;
 my $verbose;
 my $timeout;
 my $warn_time;
+my $flip_map;
 
 my $result = GetOptions(
-    'bot=s'     => \$botname,
-    'verbose'   => \$verbose,
-    'maps=s{,}' => \@maps,
-    'time=s'    => \$timeout,
-    'warn-time=i' => \$warn_time,
+    'bot       =s'     => \$botname,
+    'verbose'  => \$verbose,
+    'maps      =s{,}' => \@maps,
+    'time      =s'    => \$timeout,
+    'warn-time =i' => \$warn_time,
+    'flip-map' => \$flip_map,
 );
 
 $timeout ||= 10;
@@ -54,7 +56,7 @@ for my $mapname ( @maps ) {
         if ( $verbose ) {
             Lifter::print_map $world;
         }
-        print $bot_in Lifter::world_to_json($world);
+        print $bot_in Lifter::world_to_json($world, $flip_map);
         print $bot_in "\n";
 
         my $moves = <$bot_out>;
