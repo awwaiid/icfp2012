@@ -3,3 +3,4 @@ libjson-xs-perl
 liblocal-lib-perl
 libdata-printer-perl
 libtext-levenshtein-perl
+libgraph-perl
