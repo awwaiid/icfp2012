@@ -15,6 +15,7 @@ class World {
     public $floodingStep;
     public $robotLoc;
     public $lamdaCount;
+    public $ending = null;
     public $json;
 
     function __construct($json) {
@@ -36,7 +37,18 @@ class World {
         $this->setLamdaCount($arr['lambda_count']);
         $map = new Map(json_encode($arr['map']));
         $this->setMap($map);
+
+        if (isset($arr['ending'])) $this->setEnding($arr['ending']);
     }
+
+    public function getEnding() {
+        return $this->ending;
+    }
+
+    public function setEnding($ending) {
+        $this->ending = $ending;
+    }
+
 	/**
      * @return the $waterproofStep
      */

@@ -63,10 +63,10 @@ class Strategy {
         }
 
         if ($dir == $bad_direction) {
-            if ($dir == 'R') $dir = 'D';
-            else if ($dir == 'L') $dir = 'U';
-            else if ($dir == 'D') $dir = 'R';
-            else if ($dir == 'U') $dir = 'L';
+            if ($dir == 'R') $dir = rand(0,1) ? 'D' : 'U';
+            else if ($dir == 'L') $dir = rand(0,1) ? 'U' : 'D';
+            else if ($dir == 'D') $dir = rand(0,1) ? 'R' : 'L';
+            else if ($dir == 'U') $dir = rand(0,1) ? 'L' : 'R';
         }
 
         $GLOBALS['log']->lwrite($dir . "-" . $bad_direction . "-" . $origin . "-" . $target);
@@ -92,13 +92,27 @@ class Strategy {
     }
 
     public function doesDirectionAffectMap($direction) {
-        $cmd = "./lifter2 '" . $this->world->json . "' " . $direction;
-        $shell_return = shell_exec($cmd);
-        $world = new World($shell_return);
-        //$GLOBALS['log']->lwrite($this->world->getRobotLoc()->__toString() . ':' . $world->getRobotLoc()->__toString() . ':' . $direction);
-        if ($this->world->getRobotLoc()->__toString() == $world->getRobotLoc()->__toString()) {
+        $new_world = Lifter::checkMove($this->world, $direction);
+        if ($this->world->getRobotLoc()->__toString() == $new_world->getRobotLoc()->__toString()) {
             return false;
         }
         else return true;
+    }
+
+    public function doesDirectionLeadToDeath($direction) {
+        $new_world = Lifter::checkMove($this->world, $direction);
+        if ($new_world->getEnding()) {
+            return true;
+        }
+        else return false;
+    }
+
+    public function move($direction) {
+        if ($this->doesDirectionLeadToDeath($direction)) {
+            Move::makeMove('A');
+        }
+        else {
+            Move::makeMove($direction);
+        }
     }
 }

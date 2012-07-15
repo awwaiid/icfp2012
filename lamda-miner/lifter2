@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 
 use lib '../lib';
+use lib 'lib';
 use v5.10;
 use strict;
 use warnings;

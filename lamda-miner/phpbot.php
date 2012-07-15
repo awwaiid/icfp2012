@@ -7,6 +7,8 @@ require_once 'lib/MathFacade.php';
 require_once 'lib/Logging.php';
 require_once 'lib/Position.php';
 require_once 'lib/Strategy.php';
+require_once 'lib/Lifter.php';
+require_once 'lib/Move.php';
 
 // my super cool php bot
 
@@ -16,6 +18,14 @@ $log->lfile('out.log');
 $GLOBALS['log'] = $log;
 $cmd_log = new Logging();
 $cmd_log->lfile('cmd.log');
+
+if (isset($argv[2])) {
+    $f = fopen('php://stdin', 'r');
+    while ($line = fgets($f)) {
+
+    }
+}
+
 
 if (isset($argv[1])) {
     $world_json = $argv[1];
@@ -50,11 +60,15 @@ if (!$useful) {
     $direction = $strategy->findDirectionToTarget($my_position, $target, $direction);
     $useful = $strategy->doesDirectionAffectMap($direction);
 }
+    $dead = $strategy->doesDirectionLeadToDeath($direction);
 
 if (!$useful) {
     // abort!!
     $direction = 'A';
 }
 
-echo $direction;
+$strategy->move($direction);
+
+
+
 ?>
