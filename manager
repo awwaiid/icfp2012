@@ -24,44 +24,54 @@ my $result = GetOptions(
     'warn-time=i' => \$warn_time,
 );
 
-$timeout ||= 1;
-$warn_time = 1 if ! $warn_time || $warn_time < 0;
+$timeout ||= 10;
+$warn_time ||= 10;
 
 my $total_score = 0;
 
 for my $mapname ( @maps ) {
     my $world = Lifter::load_world($mapname);
+    #my $pid = open2(my $bot_out, my $bot_in, "$botname 2>err.txt")
     my $pid = open2(my $bot_out, my $bot_in, $botname)
       or die "Error opening bot: $!";
 
-    my $alarm = 0;
-    local $SIG{ALRM} = sub { $alarm = 1 };
-    local $SIG{INT} = sub { };
-    alarm $timeout; # timeout!
+    eval {
+      my $alarm = 0;
+      local $SIG{ALRM} = sub {
+        if(!$alarm) {
+          kill 2, $pid;
+          $alarm = 1;
+          alarm $timeout;
+        } else {
+          die "TIMEOUT";
+        }
+      };
+      local $SIG{INT} = sub { };
+      alarm $warn_time; # timeout!
 
-    while(1) {
-      if ( $verbose ) {
-          Lifter::print_map $world;
+      while(1) {
+        if ( $verbose ) {
+            Lifter::print_map $world;
+        }
+        print $bot_in Lifter::world_to_json($world);
+        print $bot_in "\n";
+
+        my $moves = <$bot_out>;
+        $moves ||= 'A';
+        chomp $moves;
+        foreach my $move (split(//,$moves)) {
+          $world = Lifter::robot_move($world, $move);
+          $world = Lifter::check_ending($world);
+          $world = Lifter::world_update($world);
+          $world = Lifter::check_ending($world);
+          print_ending($mapname, $world) && last if $world->{ending};
+        }
       }
-      print $bot_in Lifter::world_to_json($world);
-      print $bot_in "\n";
+    };
 
-      my $move = <$bot_out>;
-      chomp $move;
-      $world = Lifter::robot_move($world, $move);
-      $world = Lifter::check_ending($world);
-      $world = Lifter::world_update($world);
-      $world = Lifter::check_ending($world);
-      print_ending($mapname, $world) && last if $world->{ending};
-
-      if($alarm) {  
-        $world->{ending} = 'TIME';
-        print_ending($mapname, $world);
-        last;
-      }
-
-      kill 2, $pid if ! $warn_time;
-      $warn_time-- if $warn_time > 0;
+    if($@) {
+      $world->{ending} = 'TIME';
+      print_ending($mapname, $world);
     }
 }
 
@@ -79,3 +89,4 @@ sub print_ending {
   $total_score += $world->{score};
   return 1;
 }
+
