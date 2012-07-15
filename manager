@@ -43,13 +43,14 @@ for my $mapname ( @maps ) {
           $alarm = 1;
           alarm $timeout;
         } else {
+          $world->{score} = 0;
           die "TIMEOUT";
         }
       };
       local $SIG{INT} = sub { };
       alarm $warn_time; # timeout!
 
-      while(1) {
+      MOVES: while(1) {
         if ( $verbose ) {
             Lifter::print_map $world;
         }
@@ -64,7 +65,7 @@ for my $mapname ( @maps ) {
           $world = Lifter::check_ending($world);
           $world = Lifter::world_update($world);
           $world = Lifter::check_ending($world);
-          print_ending($mapname, $world) && last if $world->{ending};
+          print_ending($mapname, $world) && last MOVES if $world->{ending};
         }
       }
     };
