@@ -12,13 +12,14 @@ sub trapped_thing {
     my $count = 0;
     my $width = scalar @$map;
     my $height = scalar @{ $map->[0] };
+    my $blocked = qr/[#@*W1-9]/;
     for(my $y = $height - 1; $y >= 0; $y--) {
         for(my $x = 0; $x < $width; $x++) {
             if ($map->[$x][$y] =~ $test) {
-                if ( ! $x || $map->[$x - 1][$y] !~ /[.! ]/ ) {
-                    if ( $map->[$x + 1][$y] !~ /[.! ]/ ) {
-                        if ( ! $y || $map->[$x][$y - 1] !~ /[.! ]/ ) {
-                            if ( $map->[$x][$y + 1] !~ /[.! ]/ ) {
+                if ( $x && $map->[$x - 1][$y] =~ $blocked ) {
+                    if ( $map->[$x + 1][$y] =~ $blocked ) {
+                        if ( $y && $map->[$x][$y - 1] =~ $blocked ) {
+                            if ( $map->[$x][$y + 1] =~ $blocked  ) {
                                 $count++;
                             }
                         }

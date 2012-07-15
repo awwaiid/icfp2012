@@ -18,7 +18,7 @@ STDOUT->autoflush(1);
 
 # my @types = qw( L R U D W A );
 my @types = qw( L R U D );
-my $look_ahead = 5;
+my $look_ahead = 7;
 my @moves = tuples_with_repetition( \@types, $look_ahead);
 
 local $SIG{INT} = sub {
@@ -62,10 +62,7 @@ while(1) {
         my $new_world = $world;
         my $this_set = join('_', @$set);
         for my $move (@$set) {
-            $new_world = Lifter::robot_move($new_world, $move);
-            $new_world = Lifter::check_ending($new_world);
-            $new_world = Lifter::world_update($new_world);
-            $new_world = Lifter::check_ending($new_world);
+            $new_world = Lifter::eval_move( $new_world, $move);
         }
         my $set_score;
         if ( $new_world->{ending} && $new_world->{ending} =~ /CRUSHED|DROWN/ ) {
@@ -89,7 +86,7 @@ while(1) {
     my $best_score = max keys %scores;
 
     my @next_moves = shuffle( @{ $scores{ $best_score } } );
-# say STDERR "best score is $best_score : movement is " . $next_moves[0];
+say STDERR "best score is $best_score : movement is " . $next_moves[0];
     my @sequence = split('_', $next_moves[0] );
 
     for my $move ( @sequence ) {
