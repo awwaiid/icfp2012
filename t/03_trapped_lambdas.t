@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 use lib 'lib';
-use Test::More tests => 3;
+use Test::More tests => 5;
 use Map;
 use Lifter;
 
@@ -55,3 +55,33 @@ is Map::trapped_lambdas( $map ), 0, "All free";
 
 is Map::trapped_lambdas( $map ), 3, "All trapped";
 
+
+my $free_lift_map = <<END;
+###########
+# *\\#. ...#
+#**1w   . L
+#.. .. ** #
+#  #  #\\2.#
+# *\\W #W..#
+#..* . ..##
+###########
+END
+
+my $trapped_lift_map = <<END;
+###########
+# *\\#. .. #
+#**1w   .*L
+#.. .. ** #
+#  #  #\\2.#
+# *\\W #W..#
+#..* . ..##
+###########
+END
+
+($map, $dont_care) = Lifter::load_map($free_lift_map);
+
+is Map::trapped_lift( $map ), 0, "Lift is free";
+
+($map, $dont_care) = Lifter::load_map($trapped_lift_map);
+
+is Map::trapped_lift( $map ), 1, "Lift is trapped";

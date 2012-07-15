@@ -16,10 +16,10 @@ sub trapped_thing {
     for(my $y = $height - 1; $y >= 0; $y--) {
         for(my $x = 0; $x < $width; $x++) {
             if ($map->[$x][$y] =~ $test) {
-                if ( $x && $map->[$x - 1][$y] =~ $blocked ) {
-                    if ( $map->[$x + 1][$y] =~ $blocked ) {
-                        if ( $y && $map->[$x][$y - 1] =~ $blocked ) {
-                            if ( $map->[$x][$y + 1] =~ $blocked  ) {
+                if ( ! $x || $map->[$x - 1][$y] =~ $blocked ) {
+                    if ( $x == ($width - 1) || $map->[$x + 1][$y] =~ $blocked ) {
+                        if ( ! $y || $map->[$x][$y - 1] =~ $blocked ) {
+                            if ( $y == ( $height - 1 ) || $map->[$x][$y + 1] =~ $blocked  ) {
                                 $count++;
                             }
                         }

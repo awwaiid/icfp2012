@@ -11,6 +11,7 @@ use Lifter;
 use Map;
 
 use Data::Printer;
+use Data::Dumper;
 
 use IO::Scalar;
 STDIN->autoflush(1);
@@ -18,7 +19,7 @@ STDOUT->autoflush(1);
 
 # my @types = qw( L R U D W A );
 my @types = qw( L R U D );
-my $look_ahead = 7;
+my $look_ahead = 5;
 my @moves = tuples_with_repetition( \@types, $look_ahead);
 
 local $SIG{INT} = sub {
@@ -74,7 +75,7 @@ while(1) {
 
         $choices->{$this_set} = $set_score;
     }
-# p($choices);
+say STDERR Dumper($choices);
 
     # $scores{ <score value> } = [<array of moves that come to that score>]
     my %scores;
