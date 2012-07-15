@@ -30,6 +30,7 @@ $timeout ||= 10;
 $warn_time ||= 10;
 
 my $total_score = 0;
+my %summary;
 
 for my $mapname ( @maps ) {
     my $world = Lifter::load_world($mapname);
@@ -78,6 +79,11 @@ for my $mapname ( @maps ) {
     }
 }
 
+say "\nSummary:\n";
+for my $map ( keys %summary ) {
+    say "\t$map: " . $summary{ $map };
+}
+
 say "\nTotal score: $total_score\n";
 
 sub print_ending {
@@ -90,6 +96,7 @@ sub print_ending {
   say "Final score: $world->{score}";
   print "\n";
   $total_score += $world->{score};
+  $summary{$map} = $world->{score};
   return 1;
 }
 
