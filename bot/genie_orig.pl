@@ -60,12 +60,14 @@ sub run_ga {
   $ga = AI::Genetic->new(
     -fitness    => \&test_moves,
     -type       => 'listvector',
-    -population => 100,
+    -population => 20,
     -crossover  => 0.9,
     -mutation   => 0.02,
   );
   $ga->init([
-    map { [qw/ U D L R W A /] } 0..50
+    # map { [qw/ U U D D L L R R W S A /] } 0..200
+    (map { [qw/ U D L R W /] } 0..200),
+    [ 'A' ],
   ]);
   # $ga->evolve('rouletteTwoPoint', 1000);
   # $ga->evolve('tournamentUniform', 50);
@@ -83,57 +85,51 @@ sub test_moves {
   my $genes = shift;
   my $new_world = $world;
   foreach my $move (@$genes) {
-    $new_world = Lifter::robot_move($new_world, $move);
-    $new_world = Lifter::check_ending($new_world);
-    $new_world = Lifter::world_update($new_world);
-    $new_world = Lifter::check_ending($new_world);
+    $new_world = Lifter::eval_move($new_world, $move);
     last if $new_world->{ending};
   }
 
-  # my $path_bonus = get_path_bonus($new_world);
+  my $score = $new_world->{score};
+  # my $path_score = path_score($new_world);
 
-  debug $new_world->{score} . "\t";
-  my ($x, $y) = @{$new_world->{robot_loc}};
-  my ($i, $j) = @{Lifter::get_lift_loc($new_world->{map})};
-
-  # my $dist = sqrt( ($x - $i) ** 2 + ($y - $j) ** 2 );
-  # debug "Distance $dist\n";
-  return $new_world->{score}; # - ($dist * 10);
+  debug "$score ";
+  return $score; # - ($dist * 10);
 }
 
+use Graph;
+sub path_score {
+  my ($world) = @_;
+  my $graph = world_to_graph($world);
+  print STDERR "Graph:\n$graph\n";
+}
 
-# sub get_path_bonus {
-  # my $world = shift;
-  # my $graph = Graph->new;
+sub world_to_graph {
+  my ($world) = @_;
+  my $map = $world->{map};
+  my $graph = Graph->new;
+  my $width = scalar @$map;
+  my $height = scalar @{ $map->[0] };
+  for(my $y = 0; $y < $height; $y++) {
+    for(my $x = 0; $x < $width; $x++) {
+      my $cell = $map->[$x][$y];
+      if($cell =~ /[ \\.OL!A-L]/) {
+        if ( ! $x || $map->[$x - 1][$y] =~ /[ \\.OL!A-L]/ ) {
+          $graph->add_edge("$x,$y", ($x - 1) . ",$y");
+        }
+        if ( $map->[$x + 1][$y] =~ /[ \\.OL!A-L]/ ) {
+          $graph->add_edge("$x,$y", ($x + 1) . ",$y");
+        }
+        if ( ! $y || $map->[$x][$y - 1] =~ /[ \\.OL!A-L]/ ) {
+          $graph->add_edge("$x,$y", "$x," . $y - 1);
+        }
+        if ( $map->[$x][$y + 1] =~ /[ \\.OL!A-L]/ ) {
+          $graph->add_edge("$x,$y", "$x," . $y + 1);
+        }
+      } elsif($cell =~ /[A-I]/) {
+        # ... trampolines
+      }
+    }
+  }
 
-  # my $map = $world->{map};
-
-  # my $width = scalar @$map;
-  # my $height = scalar @{ $map->[0] };
-
-  # my $add_directional_edges = sub {
-    # my ($x, $y) = @_;
-    # foreach my $dest ([$x+1,$y,'R'],[$x-1,$y,'L'],[$x,$y-1,'D'],[$x,$y+1,'U']) {
-      # my ($i, $j, $d) = @$dest;
-      # next if $i < 0 || $j < 0 || $i >= $width || $j >= $height;
-      # my $t = $map->[$i][$j];
-      # if($t =~ /[\\ .OA-L]/) {
-        # $graph->add_edge("$x,$y", "$i,$j", $d);
-      # }
-    # }
-  # }
-
-  # my $count = 0;
-  # for(my $y = 0; $y < $height; $y++) {
-    # for(my $x = 0; $x < $width; $x++) {
-      # my $cell = $map->[$x][$y];
-      # if($cell =~ /[\\ .]/) {
-        # $add_directional_edges->($x,$y);
-      # }
-    # }
-  # }
-
-  # return $count;
-# }
-
+}
 
