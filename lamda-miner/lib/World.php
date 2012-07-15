@@ -15,14 +15,16 @@ class World {
     public $floodingStep;
     public $robotLoc;
     public $lamdaCount;
+    public $json;
 
     function __construct($json) {
+        $this->json = $json;
         $arr = json_decode($json, true);
         $this->setWater($arr['water']);
         $this->setWaterproof($arr['waterproof']);
         $this->setWaterproofStep($arr['waterproof_step']);
         $this->setBonusScore($arr['bonus_score']);
-        $this->setMoveCount($arr['move_count']);
+        if (isset($arr['move_count'])) $this->setMoveCount($arr['move_count']);
         $this->setScore($arr['score']);
         $this->setPartialScore($arr['partial_score']);
         $this->setFlooding($arr['flooding']);

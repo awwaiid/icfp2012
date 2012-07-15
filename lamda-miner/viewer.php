@@ -51,7 +51,7 @@ function generateState($state) {
     $state_parts = json_decode($state, true);
     $out = "";
     foreach ($state_parts as $k => $r) {
-        if (!in_array($k, array('score','lamda_count','robot_loc','lambda_remain','ending',
+        if (!in_array($k, array('score','lamda_count','robot_loc','lambda_remain','ending', 'move_count',
         	'flooding_step', 'waterproof', 'waterproof_step', 'water', 'trampoline_loc','trampoline_forward','trampoline_back', 'map'))) continue;
         if (is_array($r)) $r = json_encode($r);
         $out .= $k . ": " . $r . "<br />";
@@ -215,7 +215,7 @@ function wait() {
 }
 
 function abort() {
-    sendMove('A');
+    sendMove('A', $("#old_world").val());
 }
 
 function sendMove(move, world) {
@@ -223,7 +223,7 @@ function sendMove(move, world) {
 
     $.post("viewer.php", {next_move:move, old_world:world},
         function (data) {
-            //alert(data.command);
+            alert(data.command);
             if (data.success == 1) {
                 $("#map_container").html(data.generated_map);
                 $("#state_container").html(data.generated_state);
@@ -250,8 +250,12 @@ $(document).keydown(function(e){
         down();
         return false;
     }
-    if (e.keyCode == 48) {
+    if (e.keyCode == 48) { // 0
         playBot();
+        return false;
+    }
+    if (e.keyCode == 57) { // 9
+        abort();
         return false;
     }
 });
@@ -259,7 +263,7 @@ $(document).keydown(function(e){
 function playBot() {
     $.post("viewer.php", {play_bot:$("#play_bot").val(), old_world:$("#old_world").val()},
             function (data) {
-        //alert (data.command + data.next_move);
+                //alert (data.command + data.next_move);
                 if (data.success == 1) {
                     sendMove(data.next_move, $("#old_world").val());
                 }
@@ -271,7 +275,7 @@ function playBot() {
 function playMap() {
     $.post("viewer.php", {play_map:$("#play_map").val()},
             function (data) {
-                alert (data.command + "\n" + data.map_json);
+                //alert (data.command + "\n" + data.map_json);
                 if (data.success == 1) {
                     $("#map_container").html(data.generated_map);
                     $("#state_container").html(data.generated_state);

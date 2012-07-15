@@ -113,3 +113,20 @@
 [14/Jul/2012:18:09:28] (phpbot) going R to (3,2) towards (4,1) from (2,2)
 [14/Jul/2012:19:39:49] (phpbot) going L to (-1,) towards (,) from (,)
 [14/Jul/2012:19:40:48] (phpbot) going L to (-1,) towards (,) from (,)
+[14/Jul/2012:23:22:18] (phpbot) {"trampoline_back":{},"map":[["#","#","#","#","#","#"],["#","."," ","*","R","#"],["#"," "," ","\\",".","#"],["#","\\"," ","*"," ","#"],["L"," "," ",".","\\","#"],["#","#","#","#","#","#"]],"flooding":0,"flooding_step":0,"robot_loc":[4,4],"lambda_count":0,"waterproof_step":0,"waterproof":10,"bonus_score":0,"move_count":0,"lambda_remain":3,"partial_score":0,"trampoline_forward":{},"score":0,"water":0,"trampoline_loc":{}}:{"trampoline_back":{},"map":[["#","#","#","#","#","#"],["#","."," ","*","R","#"],["#"," "," ","\\",".","#"],["#","\\"," ","*"," ","#"],["L"," "," ",".","\\","#"],["#","#","#","#","#","#"]],"flooding":0,"flooding_step":0,"robot_loc":[4,4],"lambda_count":0,"waterproof_step":0,"waterproof":10,"bonus_score":0,"move_count":1,"lambda_remain":3,"partial_score":-1,"trampoline_forward":{},"score":-1,"water":0,"trampoline_loc":{}}
+[14/Jul/2012:23:25:47] (phpbot) {"trampoline_back":{},"map":[["#","#","#","#","#","#"],["#","."," ","*","R","#"],["#"," "," ","\\",".","#"],["#","\\"," ","*"," ","#"],["L"," "," ",".","\\","#"],["#","#","#","#","#","#"]],"flooding":0,"flooding_step":0,"robot_loc":[4,4],"lambda_count":0,"waterproof_step":0,"waterproof":10,"bonus_score":0,"move_count":0,"lambda_remain":3,"partial_score":0,"trampoline_forward":{},"score":0,"water":0,"trampoline_loc":{}}:{"trampoline_back":{},"map":[["#","#","#","#","#","#"],["#","."," ","*","R","#"],["#"," "," ","\\",".","#"],["#","\\"," ","*"," ","#"],["L"," "," ",".","\\","#"],["#","#","#","#","#","#"]],"flooding":0,"flooding_step":0,"robot_loc":[4,4],"lambda_count":0,"waterproof_step":0,"waterproof":10,"bonus_score":0,"move_count":1,"lambda_remain":3,"partial_score":-1,"trampoline_forward":{},"score":-1,"water":0,"trampoline_loc":{}}
+[14/Jul/2012:23:25:47] (phpbot) (4,4):(4,4)
+[14/Jul/2012:23:26:32] (phpbot) (4,4):(4,4)
+[14/Jul/2012:23:27:16] (phpbot) (4,4):(4,4)
+[14/Jul/2012:23:27:16] (phpbot) blah
+[14/Jul/2012:23:28:01] (phpbot) (4,4):(4,4)
+[14/Jul/2012:23:29:31] (phpbot) (4,4):(4,4):
+[14/Jul/2012:23:29:57] (phpbot) (4,4):(4,3):D
+[14/Jul/2012:23:29:58] (phpbot) (4,3):(3,3):L
+[14/Jul/2012:23:29:59] (phpbot) (3,3):(2,3):L
+[14/Jul/2012:23:30:00] (phpbot) (2,3):(2,2):D
+[14/Jul/2012:23:30:00] (phpbot) (2,2):(1,2):L
+[14/Jul/2012:23:30:01] (phpbot) (1,2):(2,2):R
+[14/Jul/2012:23:30:02] (phpbot) (2,2):(2,2):R
+[14/Jul/2012:23:57:49] (phpbot) R
+[14/Jul/2012:23:57:53] (phpbot) R

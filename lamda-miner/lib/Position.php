@@ -45,4 +45,20 @@ class Position {
     public function __toString() {
         return "(" . $this->getX() . "," . $this->getY() . ")";
     }
+
+    public function up () {
+        return new Position($this->x, ($this->y + 1));
+    }
+
+    public function down() {
+        return new Position($this->x, ($this->y - 1));
+    }
+
+    public function left() {
+        return new Position(($this->x + 1), $this->y);
+    }
+
+    public function right() {
+        return new Position(($this->x - 1), $this->y);
+    }
 }
