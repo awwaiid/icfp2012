@@ -18,12 +18,12 @@ my $warn_time;
 my $flip_map;
 
 my $result = GetOptions(
-    'bot       =s'     => \$botname,
-    'verbose'  => \$verbose,
-    'maps      =s{,}' => \@maps,
-    'time      =s'    => \$timeout,
-    'warn-time =i' => \$warn_time,
-    'flip-map' => \$flip_map,
+    'bot=s'     => \$botname,
+    'verbose'   => \$verbose,
+    'maps=s{,}' => \@maps,
+    'time=s'    => \$timeout,
+    'warn-time=i' => \$warn_time,
+    'flip-map'  => \$flip_map,
 );
 
 $timeout ||= 10;
