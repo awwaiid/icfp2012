@@ -2,3 +2,4 @@ libfile-slurp-perl
 libjson-xs-perl
 liblocal-lib-perl
 libdata-printer-perl
+libtext-levenshtein-perl
