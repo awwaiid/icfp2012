@@ -80,8 +80,8 @@ for my $mapname ( @maps ) {
 }
 
 say "\nSummary:\n";
-for my $map ( keys %summary ) {
-    say "\t$map: " . $summary{ $map };
+for my $map ( sort keys %summary ) {
+    say "\t$map: \t" . $summary{ $map };
 }
 
 say "\nTotal score: $total_score\n";
@@ -96,7 +96,7 @@ sub print_ending {
   say "Final score: $world->{score}";
   print "\n";
   $total_score += $world->{score};
-  $summary{$map} = $world->{score};
+  $summary{$map} = "$world->{score}\t$world->{ending}";
   return 1;
 }
 
