@@ -113,7 +113,8 @@ class Strategy {
 
     public function doesDirectionAffectMap($direction) {
         $new_world = Lifter::checkMove($this->world, $direction);
-        if ($this->world->getRobotLoc()->__toString() == $new_world->getRobotLoc()->__toString()) {
+        if ($this->world->getRobotLoc()->__toString() == $new_world->getRobotLoc()->__toString()
+            && !$new_world->getEnding()) {
             return false;
         }
         else return true;
@@ -121,7 +122,7 @@ class Strategy {
 
     public function doesDirectionLeadToDeath($direction) {
         $new_world = Lifter::checkMove($this->world, $direction);
-        if ($new_world->getEnding()) {
+        if ($new_world->getEnding() && $new_world->getEnding() != "WIN") {
             return true;
         }
         else return false;
