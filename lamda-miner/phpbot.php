@@ -26,7 +26,6 @@ if (isset($argv[2])) {
     }
 }
 
-
 if (isset($argv[1])) {
     $world_json = $argv[1];
     $cmd_log->lwrite($world_json);
