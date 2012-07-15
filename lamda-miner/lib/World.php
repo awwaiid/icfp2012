@@ -16,9 +16,10 @@ class World {
     public $robotLoc;
     public $lamdaCount;
     public $ending = null;
+    public $robotLocPrev = null;
     public $json;
 
-    function __construct($json) {
+	function __construct($json) {
         $this->json = $json;
         $arr = json_decode($json, true);
         $this->setWater($arr['water']);
@@ -34,11 +35,32 @@ class World {
         if (!$this->getRobotLoc() instanceof Position) {
             throw new Exception('Must be a Position object');
         }
+        if (isset($arr['robot_loc_prev'])) $this->setRobotLocPrev($arr['robot_loc_prev']);
         $this->setLamdaCount($arr['lambda_count']);
         $map = new Map(json_encode($arr['map']));
         $this->setMap($map);
 
         if (isset($arr['ending'])) $this->setEnding($arr['ending']);
+    }
+    /**
+     * @return the $robot_loc_prev
+     */
+    public function getRobotLocPrev ()
+    {
+        return $this->robotLocPrev;
+    }
+
+	/**
+     * @param field_type $robot_loc_prev
+     */
+    public function setRobotLocPrev ($robotLocPrev)
+    {
+        if (is_array($robotLocPrev)) {
+            $this->robotLocPrev = new Position($robotLocPrev[0], $robotLocPrev[1]);
+        }
+        else {
+            $this->robotLocPrev = $robotLocPrev;
+        }
     }
 
     public function getEnding() {

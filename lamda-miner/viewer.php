@@ -91,7 +91,10 @@ function generateMap($map_string) {
         '6' => 'target6.jpg',
         '7' => 'target7.jpg',
         '8' => 'target8.jpg',
-        '9' => 'target9.jpg'
+        '9' => 'target9.jpg',
+        'W' => 'beard.jpg',
+        '!' => 'razor.jpg',
+        '@' => 'horock.jpg'
     );
     $map_array = explode("\n", $map_string);
     $out = "";
@@ -142,7 +145,8 @@ function generateMapFromJSON($world) {
         '8' => 'target8.jpg',
         '9' => 'target9.jpg',
         'W' => 'beard.jpg',
-        '!' => 'razor.jpg'
+        '!' => 'razor.jpg',
+        '@' => 'horock.jpg'
     );
     $world_array = json_decode($world, true);
     $map_array = $world_array['map'];

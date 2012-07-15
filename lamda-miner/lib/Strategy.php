@@ -3,6 +3,7 @@
 class Strategy {
 
     public $world;
+    public $attempt_count = 0;
 
     function __construct($world) {
         $this->world = $world;
@@ -20,7 +21,7 @@ class Strategy {
         $target_lamda = null;
         foreach ($lamdas as $l) {
             $d = MathFacade::findMDistanceBetweenTwoPositions($origin, $l);
-            $GLOBALS['log']->lwrite($d);
+            //$GLOBALS['log']->lwrite($d);
             if (!$least_dist || $d < $least_dist) {
                 $least_dist = $d;
                 $target_lamda = $l;
@@ -37,39 +38,58 @@ class Strategy {
         return $target_lamda;
     }
 
-    public function findDirectionToTarget(Position $origin, Position $target, $bad_direction = null) {
-        $diff_in_height = abs($target->y - $origin->y);
-        $diff_in_width = abs($target->x - $origin->x);
+    public function findDirectionToTarget(Position $origin, Position $target) {
 
-        $up = $target->y > $origin->y ? true : false;
-        $right = $target->x > $origin->x ? true : false;
+        // get adjacent positions
+        $positions = WorldFacade::getAdjacentPositions($this->world->getMap(), $origin);
 
-        $options = array();
-        $options [] = ($up) ? $origin->up() : $origin->down();
-        $options [] = ($right) ? $origin->right() : $origin->left();
+        //filter out last Position and rocks
+        $GLOBALS['log']->lwrite('Adjacent Positions:');
+        $prev_loc_hold = null;
+        foreach ($positions as $k=>$p) {
 
-        if ($diff_in_height > $diff_in_width) {
-            $dir = $options[0] == $origin->up() ? 'U' : 'D';
-        }
-        if ($diff_in_height < $diff_in_width) {
-            $dir = $options[1] == $origin->right() ? 'R' : 'L';
-        }
-        if ($diff_in_height == $diff_in_width) {
-            $best = $this->compare($options[0], $options[1]);
-            if ($best == $origin->up()) $dir = 'U';
-            if ($best == $origin->down()) $dir = 'D';
-            if ($best == $origin->right()) $dir = 'R';
-            if ($best == $origin->left()) $dir = 'L';
+            if ($this->world->getRobotLocPrev() && $p['pos']->__toString() == $this->world->getRobotLocPrev()->__toString()) {
+                $prev_loc_hold = $positions[$k];
+                unset ($positions[$k]);
+                continue;
+            }
+            if ($p['type'] == '*') {
+                unset ($positions[$k]);
+                continue;
+            }
+            $GLOBALS['log']->lwrite('   ' . $p['pos'] . ' ' . $p['type'] . ' ' . $p['dir']);
+
         }
 
-        if ($dir == $bad_direction) {
-            if ($dir == 'R') $dir = rand(0,1) ? 'D' : 'U';
-            else if ($dir == 'L') $dir = rand(0,1) ? 'U' : 'D';
-            else if ($dir == 'D') $dir = rand(0,1) ? 'R' : 'L';
-            else if ($dir == 'U') $dir = rand(0,1) ? 'L' : 'R';
+        if (empty($positions)) {
+            if ($prev_loc_hold) {
+                $positions [] = $prev_loc_hold;
+            }
+            else {
+                $GLOBALS['log']->lwrite('Aborting due to empty positions');
+                return 'A';
+            }
         }
 
-        $GLOBALS['log']->lwrite($dir . "-" . $bad_direction . "-" . $origin . "-" . $target);
+        // find closest position to target
+        $least_distance = 0;
+        $least_pos = null;
+        foreach ($positions as $p) {
+            $dis = MathFacade::findMDistanceBetweenTwoPositions($p['pos'], $target);
+            if (!$least_pos || $least_distance >= $dis ) {
+                if ($least_distance == $dis && $dis != 0) {
+                    $best = $this->compare($least_pos['pos'], $p['pos']);
+                    if ($best->__toString() != $p['pos']) {
+                        continue;
+                    }
+                }
+                $least_pos = $p;
+                $least_distance = $dis;
+            }
+        }
+        $dir = $least_pos['dir'];
+
+        $GLOBALS['log']->lwrite("E: " . $dir . "-" . $origin . "-" . $target);
         return $dir;
     }
 
@@ -108,11 +128,29 @@ class Strategy {
     }
 
     public function move($direction) {
+
+        if ($direction == 'A') {
+            Move::abort();
+            return true;
+        }
+
+        if (!$this->doesDirectionAffectMap($direction)) {
+            if ($this->attempt_count > 3) {
+                $GLOBALS['log']->lwrite('Aborting due to too many bad attempts');
+                Move::abort();
+                return true;
+            }
+            $this->attempt_count ++;
+            return false;
+        }
+
         if ($this->doesDirectionLeadToDeath($direction)) {
-            Move::makeMove('A');
+            $GLOBALS['log']->lwrite('Aborting due to impending death');
+            Move::abort();
         }
         else {
             Move::makeMove($direction);
         }
+        return true;
     }
 }

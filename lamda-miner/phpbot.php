@@ -36,39 +36,37 @@ else {
 }
 $world = new World($world_json);
 $strategy = new Strategy($world);
-$my_position = $world->getRobotLoc();
-$closest_lambda = $strategy->findClosestLamda($my_position);
+$direction = null;
+$GLOBALS['log']->lwrite('**************************');
+$GLOBALS['log']->lwrite('Looking for direction');
+while (!$direction || !$strategy->move($direction)) {
 
-if (is_null($closest_lambda)) {
-    $target = WorldFacade::findLift($world->getMap());
-    if (!$target) {
-        echo 'A';
-        exit;
+    $GLOBALS['log']->lwrite('--------------------------');
+    $my_position = $world->getRobotLoc();
+    $GLOBALS['log']->lwrite('My Position: ' . $my_position);
+    $closest_lambda = $strategy->findClosestLamda($my_position);
+    $GLOBALS['log']->lwrite('Closest Lamda: ' . $closest_lambda);
+
+    if (is_null($closest_lambda)) {
+        $target = WorldFacade::findLift($world->getMap());
+        if (!$target) {
+            $GLOBALS['log']->lwrite('Aborting due to no lambda or lift targets');
+            $direction = 'A';
+            continue;
+        }
+        else {
+            $GLOBALS['log']->lwrite('Target is Open Lift!: ' . $target);
+        }
+    }
+    else {
+        $target = $closest_lambda;
+    }
+
+    $direction = $strategy->findDirectionToTarget($my_position, $target);
+    if ($direction) {
+        $GLOBALS['log']->lwrite('Got a direction!: ' . $direction);
+    }
+    else {
+        $GLOBALS['log']->lwrite("Could not get a direction :(");
     }
 }
-else {
-    $target = $closest_lambda;
-}
-
-$direction = $strategy->findDirectionToTarget($my_position, $target);
-
-//determine if direction is useless;
-$useful = $strategy->doesDirectionAffectMap($direction);
-
-if (!$useful) {
-    // go a different direction
-    $direction = $strategy->findDirectionToTarget($my_position, $target, $direction);
-    $useful = $strategy->doesDirectionAffectMap($direction);
-}
-    $dead = $strategy->doesDirectionLeadToDeath($direction);
-
-if (!$useful) {
-    // abort!!
-    $direction = 'A';
-}
-
-$strategy->move($direction);
-
-
-
-?>
