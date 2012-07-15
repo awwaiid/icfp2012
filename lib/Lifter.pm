@@ -188,7 +188,7 @@ sub get_lambda_remain {
   my $count = 0;
   for(my $y = 0; $y < $height; $y++) {
     for(my $x = 0; $x < $width; $x++) {
-      $count++ if $map->[$x][$y] eq '\\';
+      $count++ if $map->[$x][$y] =~ /[\\@]/;
     }
   }
   return $count;
