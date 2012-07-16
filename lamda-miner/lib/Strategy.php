@@ -171,6 +171,18 @@ class Strategy {
         }
         else return false;
     }
+    public function doesDirectionLeadToStalemate($direction) {
+        $new_world = Lifter::checkMove($this->world, $direction);
+        $new_strat = new Strategy($new_world);
+        foreach (array('U','D','L','R') as $dir) {
+            if ($new_strat->doesDirectionAffectMap($dir)) {
+                if (!$new_strat->doesDirectionLeadToDeath($dir)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     public function move($direction) {
 
@@ -202,9 +214,21 @@ class Strategy {
             $GLOBALS['log']->lwrite('that will lead to death - trying something else');
             return false;
         }
-        else {
-            Move::makeMove($direction);
+
+        if ($this->doesDirectionLeadToStalemate($direction)) {
+            if ($this->attempt_count > 3) {
+                $GLOBALS['log']->lwrite('Aborting due to impending stalemate');
+                Move::abort();
+                return true;
+            }
+            $this->attempt_count ++;
+            $this->bad_directions [] = $direction;
+            $GLOBALS['log']->lwrite('that will lead to stalemate - trying something else');
+            return false;
         }
+
+        Move::makeMove($direction);
+
         return true;
     }
 }
