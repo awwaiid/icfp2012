@@ -18,7 +18,7 @@ while ($line = fgets($f)) {
     $start_world = json_decode($line);
     $start_score = $start_world->score;
 
-    fwrite(STDERR, "Looking ahead 22 moves\n");
+    // fwrite(STDERR, "Looking ahead 22 moves\n");
     for ($i = 0; $i < 22; $i++) {
         $dir = shell_exec("lamda-miner/phpbot.php '" . $line . "'");
         $line = Lifter::checkMove($line, $dir);
@@ -28,15 +28,15 @@ while ($line = fgets($f)) {
 
     }
 
-    foreach ($move_queue as $k=>$m) {
-        fwrite (STDERR, $m);
-    }
-    fwrite (STDERR, "\n");
+    // foreach ($move_queue as $k=>$m) {
+        // fwrite (STDERR, $m);
+    // }
+    // fwrite (STDERR, "\n");
 
     $ending_score = $world->score;
-    fwrite(STDERR, $start_score . ' - ' . $ending_score . "\n");
+    // fwrite(STDERR, $start_score . ' - ' . $ending_score . "\n");
     if ($start_score >= $ending_score) {
-        fwrite(STDERR, "Aborting because score gets worse\n");
+        // fwrite(STDERR, "Aborting because score gets worse\n");
         $dir = 'A';
     }
     else {
