@@ -13,7 +13,7 @@ use Map;
 use Data::Printer;
 use Data::Dumper;
 
-use IO::Scalar;
+use IO::Handle;
 STDIN->autoflush(1);
 STDOUT->autoflush(1);
 
