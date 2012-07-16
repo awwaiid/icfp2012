@@ -7,15 +7,21 @@ Members:
 * borbyu    - Jason Woys   - borbyu@gmail.com
 * awwaiid   - Brock Wilcox - awwaiid@thelackthereof.org
 
-We developed 3 major bots and a web-based UI. Our core code is written in Perl5, and one bot and the UI are written in PHP (and js). We also built a 'manager' which helped us test the bots. Oh, and a small perl test suite.
+We developed 3 major bots and a web-based UI. Our core code is written in
+Perl5, and one bot and the UI are written in PHP (and js). We also built a
+'manager' which helped us test the bots. Oh, and a small perl test suite.
 
 The bots:
 
-* genie_orig.pl - uses AI::Genetic to evolve a set of moves for a given map. This is what was submitted for the lightning round, and was initially better than the other bots.
+* genie_orig.pl - uses AI::Genetic to evolve a set of moves for a given map.
+  This is what was submitted for the lightning round, and was initially better
+  than the other bots.
 
-* look_ahead.pl - Tries N moves ahead, and keeps the highest score. Along with some other minor heuristics, such as a simple abort-if-impossible
+* look_ahead.pl - Tries N moves ahead, and keeps the highest score. Along with
+  some other minor heuristics, such as a simple abort-if-impossible
 
-* phpbot.php - Uses much better hand-made heuristics and position evaluation and path finding to decide, in chunks of 22 moves, what to do next.
+* phpbot.php - Uses much better hand-made heuristics and position evaluation
+  and path finding to decide, in chunks of 22 moves, what to do next.
 
 We ran them against all of the organizer maps, and phpbot.php is the best!
 
