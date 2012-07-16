@@ -14,10 +14,12 @@ require_once 'lib/Move.php';
 
 // get the world;
 $log = new Logging();
-$log->lfile('out.log');
+// $log->lfile('out.log');
+$log->lfile('/dev/null');
 $GLOBALS['log'] = $log;
 $cmd_log = new Logging();
-$cmd_log->lfile('cmd.log');
+// $cmd_log->lfile('cmd.log');
+$cmd_log->lfile('/dev/null');
 
 if (isset($argv[2])) {
     $f = fopen('php://stdin', 'r');
