@@ -13,8 +13,8 @@ Perl5, and one bot and the UI are written in PHP (and js). We also built a
 
 The GUI:
 
-* lamda-miner/viewer.php
-* Screenshot at lamda-miner/screenshot.jpg
+* lambda-miner/viewer.php
+* Screenshot at lambda-miner/screenshot.jpg
 * Allows control with arrow keys
 
 The bots:

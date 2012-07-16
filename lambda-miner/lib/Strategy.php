@@ -16,27 +16,27 @@ class Strategy {
 
     public function findClosestLamda(Position $origin) {
 
-        $lamdas = WorldFacade::findLambdas($this->world->getMap());
+        $lambdas = WorldFacade::findLambdas($this->world->getMap());
 
         $least_dist = null;
-        $target_lamda = null;
-        foreach ($lamdas as $l) {
+        $target_lambda = null;
+        foreach ($lambdas as $l) {
             $d = MathFacade::findMDistanceBetweenTwoPositions($origin, $l);
             $GLOBALS['log']->lwrite($origin . '-' . $l . '-' . $d);
             if (!$least_dist || $d < $least_dist) {
                 $least_dist = $d;
-                $target_lamda = $l;
+                $target_lambda = $l;
             }
-            if ($d == $least_dist && !is_null($target_lamda)) {
+            if ($d == $least_dist && !is_null($target_lambda)) {
                 $d2 = MathFacade::findMDistanceBetweenTwoPositions($l, WorldFacade::findLift($this->world->getMap()));
-                $d3 = MathFacade::findMDistanceBetweenTwoPositions($target_lamda, WorldFacade::findLift($this->world->getMap()));
+                $d3 = MathFacade::findMDistanceBetweenTwoPositions($target_lambda, WorldFacade::findLift($this->world->getMap()));
                 if ($d2 > $d3) {
-                    $target_lamda = $l;
+                    $target_lambda = $l;
                     $least_dist = $d;
                 }
             }
         }
-        return $target_lamda;
+        return $target_lambda;
     }
 
     public function findDirectionToTarget(Position $origin, Position $target) {

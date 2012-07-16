@@ -7,14 +7,14 @@ class World {
     public $water;
     public $bonusScore;
     public $moveCount;
-    public $lamdaRemain;
+    public $lambdaRemain;
     public $partialScore;
     public $score;
     public $map;
     public $flooding;
     public $floodingStep;
     public $robotLoc;
-    public $lamdaCount;
+    public $lambdaCount;
     public $ending = null;
     public $robotLocPrev = null;
     public $json;
@@ -112,11 +112,11 @@ class World {
     }
 
 	/**
-     * @return the $lamdaRemain
+     * @return the $lambdaRemain
      */
     public function getLamdaRemain ()
     {
-        return $this->lamdaRemain;
+        return $this->lambdaRemain;
     }
 
 	/**
@@ -168,11 +168,11 @@ class World {
     }
 
 	/**
-     * @return the $lamdaCount
+     * @return the $lambdaCount
      */
     public function getLamdaCount ()
     {
-        return $this->lamdaCount;
+        return $this->lambdaCount;
     }
 
 	/**
@@ -216,11 +216,11 @@ class World {
     }
 
 	/**
-     * @param field_type $lamdaRemain
+     * @param field_type $lambdaRemain
      */
-    public function setLamdaRemain ($lamdaRemain)
+    public function setLamdaRemain ($lambdaRemain)
     {
-        $this->lamdaRemain = $lamdaRemain;
+        $this->lambdaRemain = $lambdaRemain;
     }
 
 	/**
@@ -277,11 +277,11 @@ class World {
     }
 
 	/**
-     * @param field_type $lamdaCount
+     * @param field_type $lambdaCount
      */
-    public function setLamdaCount ($lamdaCount)
+    public function setLamdaCount ($lambdaCount)
     {
-        $this->lamdaCount = $lamdaCount;
+        $this->lambdaCount = $lambdaCount;
     }
 
 

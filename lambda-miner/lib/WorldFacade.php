@@ -17,7 +17,7 @@ class WorldFacade {
     }
 
     public static function findLamdaGroups (Map $map) {
-        //get lamdas
+        //get lambdas
         $lambdas = self::findLambdas($map);
         foreach ($lambdas as $l) {
 

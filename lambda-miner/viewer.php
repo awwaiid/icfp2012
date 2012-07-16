@@ -51,7 +51,7 @@ function generateState($state) {
     $state_parts = json_decode($state, true);
     $out = "";
     foreach ($state_parts as $k => $r) {
-        if (!in_array($k, array('score','lamda_count','robot_loc','lambda_remain','ending', 'move_count', 'razors', 'robot_loc_prev',
+        if (!in_array($k, array('score','lambda_count','robot_loc','lambda_remain','ending', 'move_count', 'razors', 'robot_loc_prev',
         	'flooding_step', 'waterproof', 'waterproof_step', 'water', 'trampoline_loc','trampoline_forward','trampoline_back', 'map'))) continue;
         if (is_array($r)) $r = json_encode($r);
         $out .= $k . ": " . $r . "<br />";
@@ -175,7 +175,7 @@ function generateMapFromJSON($world) {
     return $out;
 }
 
-// lamda miner viewer defaults
+// lambda miner viewer defaults
 
 $map_string = "
 #########
@@ -310,7 +310,7 @@ function playSeq() {
 
 </script>
 
-<title>lamda miner viewer</title>
+<title>lambda miner viewer</title>
 </head>
 
 <body>

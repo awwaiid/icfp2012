@@ -20,7 +20,7 @@ while ($line = fgets($f)) {
 
     // fwrite(STDERR, "Looking ahead 22 moves\n");
     for ($i = 0; $i < 22; $i++) {
-        $dir = shell_exec("lamda-miner/phpbot.php '" . $line . "'");
+        $dir = shell_exec("lambda-miner/phpbot.php '" . $line . "'");
         $line = Lifter::checkMove($line, $dir);
         $move_queue [] = $dir;
         $world = json_decode ($line);
@@ -51,7 +51,7 @@ while ($line = fgets($f)) {
 class Lifter {
 
     public static function checkMove($world_json, $direction) {
-        $bin = "./lamda-miner/lifter2";
+        $bin = "./lambda-miner/lifter2";
         $cmd = $bin . " '" . $world_json . "' " . $direction;
         $shell_return = shell_exec($cmd);
         return $shell_return;
