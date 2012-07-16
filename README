@@ -11,6 +11,12 @@ We developed 3 major bots and a web-based UI. Our core code is written in
 Perl5, and one bot and the UI are written in PHP (and js). We also built a
 'manager' which helped us test the bots. Oh, and a small perl test suite.
 
+The GUI:
+
+* lamda-miner/viewer.php
+* Screenshot at lamda-miner/screenshot.jpg
+* Allows control with arrow keys
+
 The bots:
 
 * genie_orig.pl - uses AI::Genetic to evolve a set of moves for a given map.
