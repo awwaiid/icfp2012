@@ -18,8 +18,8 @@ while ($line = fgets($f)) {
     $start_world = json_decode($line);
     $start_score = $start_world->score;
 
-    fwrite(STDERR, "Looking ahead 25 moves\n");
-    for ($i = 0; $i < 25; $i++) {
+    fwrite(STDERR, "Looking ahead 22 moves\n");
+    for ($i = 0; $i < 22; $i++) {
         $dir = shell_exec("lamda-miner/phpbot.php '" . $line . "'");
         $line = Lifter::checkMove($line, $dir);
         $move_queue [] = $dir;

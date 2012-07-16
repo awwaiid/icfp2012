@@ -16,6 +16,14 @@ class WorldFacade {
         return $coords;
     }
 
+    public static function findLamdaGroups (Map $map) {
+        //get lamdas
+        $lambdas = self::findLambdas($map);
+        foreach ($lambdas as $l) {
+
+        }
+    }
+
     public function getCoord($x, $y, $dim) {
         $y = $dim[1] - 1 - $y;
         return new Position($x, $y);
@@ -65,15 +73,22 @@ class WorldFacade {
         $positions = array('U'=>$up_pos, 'D'=>$down_pos, 'L'=>$left_pos, 'R'=>$right_pos);
 
         $out = array();
+        $walls = array();
         foreach ($types as $k=>$p) {
             if (!$p || $p == '#' || $p =='L' || $p == 'W' || is_int($p)) {
-                unset ($positions[$k]);
+                //unset ($positions[$k]);
+                $walls [] = array('pos'=>$positions[$k], 'dir'=>$k, 'type'=>$p);
+            }
+            else if ($p == '*' || $p == '+' || $p == '@') {
+                $walls [] = array('pos'=>$positions[$k], 'dir'=>$k, 'type'=>$p);
+                $out [] = array('pos'=>$positions[$k], 'dir'=>$k, 'type'=>$p);
             }
             else {
                 $out [] = array('pos'=>$positions[$k], 'dir'=>$k, 'type'=>$p);
             }
+
         }
-        return $out;
+        return array('walls'=>$walls, 'positions'=>$out);
 
     }
 

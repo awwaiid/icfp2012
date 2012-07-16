@@ -2,8 +2,17 @@
 
 class MathFacade {
 
-    public static function findDistanceBetweenTwoPositions(Position $a, Position $b) {
-        $d = sqrt( pow($b->x - $a->x,2) + pow($b->y - $a->y,2) );
+    public static function findSDistanceBetweenTwoPositions(Position $a, Position $b) {
+        //$GLOBALS['log']->lwrite(" SD:" . $a . '-' . $b);
+        if (abs($b->x - $a->x) == 0) {
+            $d = abs($b->y - $a->y);
+        }
+        else if (abs($b->y - $a->y) == 0) {
+            $d = abs($b->x - $a->x);
+        }
+        else {
+            $d = 0;
+        }
         return $d;
     }
 

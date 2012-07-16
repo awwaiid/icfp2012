@@ -4,6 +4,7 @@ class Strategy {
 
     public $world;
     public $attempt_count = 0;
+    public $bad_directions = array();
 
     function __construct($world) {
         $this->world = $world;
@@ -40,8 +41,41 @@ class Strategy {
 
     public function findDirectionToTarget(Position $origin, Position $target) {
 
+        $try_to_crawl_wall = false;
         // get adjacent positions
-        $positions = WorldFacade::getAdjacentPositions($this->world->getMap(), $origin);
+        $all_positions = WorldFacade::getAdjacentPositions($this->world->getMap(), $origin);
+        $positions = $all_positions['positions'];
+        $walls = $all_positions['walls'];
+        //see if we are crawling a wall
+        $GLOBALS['log']->lwrite('Adjacent Walls:');
+
+        if (!is_null($this->world->getRobotLocPrev())) {
+            $prev_rob_pos = $this->world->getRobotLocPrev();
+            $GLOBALS['log']->lwrite('Prev_Rob_Loc: ' . $prev_rob_pos);
+            foreach ($walls as $w) {
+                if ($w['pos']->x == 0 || $w['pos']->y == 0) continue;
+                $GLOBALS['log']->lwrite('   ' . $w['pos'] . ' ' . $w['type'] . ' ' . $w['dir']);
+                $prev_all_positions = WorldFacade::getAdjacentPositions($this->world->getMap(), $prev_rob_pos);
+                $prev_walls = $prev_all_positions['walls'];
+                foreach ($prev_walls as $pw) {
+                    if ($w['dir'] == $pw['dir']) {
+                        // we are crawling a wall.
+                        $GLOBALS['log']->lwrite('trying to crawl wall');
+                        $try_to_crawl_wall = true;
+                    }
+
+                }
+            }
+        }
+
+        //filter out bad positions
+        foreach ($positions as $k=>$p) {
+            foreach ($this->bad_directions as $b) {
+                if ($p['dir'] == $b) {
+                    unset ($positions[$k]);
+                }
+            }
+        }
 
         //filter out last Position and rocks
         $GLOBALS['log']->lwrite('Adjacent Positions:');
@@ -88,6 +122,16 @@ class Strategy {
             }
         }
         $dir = $least_pos['dir'];
+
+        if ($try_to_crawl_wall) {
+            foreach ($positions as $p) {
+                $dis = MathFacade::findSDistanceBetweenTwoPositions($p['pos'], $prev_rob_pos);
+                //$GLOBALS['log']->lwrite(" *" . $dis . '-' . $prev_rob_pos . '-' . $p['pos']);
+                if ($dis == 2) {
+                    $dir = $p['dir'];
+                }
+            }
+        }
 
         $GLOBALS['log']->lwrite("E: " . $dir . "-" . $origin . "-" . $target);
         return $dir;
@@ -142,12 +186,21 @@ class Strategy {
                 return true;
             }
             $this->attempt_count ++;
+            $this->bad_directions [] = $direction;
+            $GLOBALS['log']->lwrite('No affect on map - trying something else');
             return false;
         }
 
         if ($this->doesDirectionLeadToDeath($direction)) {
-            $GLOBALS['log']->lwrite('Aborting due to impending death');
-            Move::abort();
+            if ($this->attempt_count > 3) {
+                $GLOBALS['log']->lwrite('Aborting due to impending death');
+                Move::abort();
+                return true;
+            }
+            $this->attempt_count ++;
+            $this->bad_directions [] = $direction;
+            $GLOBALS['log']->lwrite('that will lead to death - trying something else');
+            return false;
         }
         else {
             Move::makeMove($direction);
