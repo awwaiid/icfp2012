@@ -34,19 +34,51 @@ eval {
   run_ga();
 };
 
-my $moves = $ga->getFittest->genes;
+
+sub maximize {
+  my ($moves) = @_;
+  my $local_world = $world;
+  my @best_moves = ();
+  my $max_score = -100000;
+  my @moves_so_far = ();
+  foreach my $move (@$moves) {
+    push @moves_so_far, $move;
+    $local_world = Lifter::eval_move($local_world, $move);
+    if($local_world->{score} > $max_score) {
+      $max_score = $local_world->{score};
+      (@best_moves) = (@moves_so_far);
+      debug "New best ($max_score): @best_moves\n";
+    }
+    my $abort_world = Lifter::eval_move($local_world, 'A');
+    if($abort_world->{score} > $max_score) {
+      debug "Abort is better!\n";
+      $max_score = $abort_world->{score};
+      (@best_moves) = (@moves_so_far, 'A');
+      debug "New best ($max_score): @best_moves\n";
+    }
+  }
+  return [@best_moves];
+}
 
 if($@) {
-  my $best = $ga->getFittest;
   debug "Interrupt!\n";
-  debug "\nBest score = " . $best->score . "\n";
-  debug "Best genes = " . join('',$best->genes) . "\n";
-  print join('',$ga->getFittest->genes) . "\n";
+}
+
+my $best = $ga->getFittest;
+my $moves = scalar $best->genes;
+
+debug "\nBest score = " . $best->score . "\n";
+debug "Best genes = " . join('',$best->genes) . "\n";
+my $best_genes = maximize($moves);
+debug "Max genes  = " . join('',@$best_genes) . "\n";
+
+if($@) {
+  print join('',@$best_genes) . "\n";
   exit;
 }
-    
 
-while(my $move = shift @$moves) {
+
+while(my $move = shift @$best_genes) {
   debug "Move: $move\n";
   print "$move\n";
   <>;
@@ -60,7 +92,7 @@ sub run_ga {
   $ga = AI::Genetic->new(
     -fitness    => \&test_moves,
     -type       => 'listvector',
-    -population => 20,
+    -population => 50,
     -crossover  => 0.9,
     -mutation   => 0.02,
   );

@@ -18,6 +18,7 @@ use AI::Genetic::Defaults;
 
 my %_strategy = (
 		 rouletteSinglePoint => \&AI::Genetic::Defaults::rouletteSinglePoint,
+		 rouletteSinglePointFlip => \&AI::Genetic::Defaults::rouletteSinglePointFlip,
 		 rouletteTwoPoint    => \&AI::Genetic::Defaults::rouletteTwoPoint,
 		 rouletteUniform     => \&AI::Genetic::Defaults::rouletteUniform,
 

@@ -5,11 +5,19 @@ use strict;
 use warnings;
 use lib 'lib';
 use local::lib 'cpan';
+our ($a, $b);
 
 use AI::Genetic;
 use JSON::XS;
 use Lifter;
 use Text::Levenshtein qw(distance);
+use List::Util qw( shuffle sum );
+use List::MoreUtils ':all';
+use Storable;
+# $Storable::Deparse = 1;
+# $Storable::Eval = sub {
+  # my_eval($_[0]);
+# };
 
 use IO::Handle;
 STDIN->autoflush(1);
@@ -34,12 +42,15 @@ my $map_width  = scalar @{$world->{map}};
 my $best_score = -10000;
 my $best_genes = [];
 my $best_steps = '';
+my $best_moves = '';
+my $best_pattern_moves = '';
 
 # Now we use a GA to decide what moves to do
 eval {
   local $SIG{INT} = sub { die };
   run_ga();
 };
+print STDERR $@ if $@;
 
 my $moves = $ga->getFittest->genes;
 
@@ -48,11 +59,15 @@ if($@) {
   debug "Interrupt!\n";
   debug "\nBest score = " . $best->score . "\n";
   debug "Best genes = " . join('',$best->genes) . "\n";
-  print join('',$ga->getFittest->genes) . "A\n";
+  print $best_moves . "A\n";
+    debug "Moves:\n$best_pattern_moves\n";
+    debug "------- all patterns -------\n";
+    print_pattern_geneome($best_genes);
+  # store [map { scalar $_->genes } @{$ga->people()}], 'store.g';
   exit;
 }
     
-
+$moves = [ split(//, $best_moves) ];
 while(my $move = shift @$moves) {
   debug "Move: $move\n";
   print "$move\n";
@@ -61,9 +76,15 @@ while(my $move = shift @$moves) {
 
 print "A\n" while 1;
 
+# store [map { scalar $_->genes } @{$ga->people()}], 'store.g';
 exit;
 
 sub run_ga {
+
+  # if(-f 'store.g') {
+    # $ga = retrieve('store.g');
+    # $ga->{FITFUNC} = \&test_pattern_moves;
+  # } else {
   $ga = AI::Genetic->new(
     # -fitness    => \&test_moves,
     -fitness    => \&test_pattern_moves,
@@ -79,23 +100,36 @@ sub run_ga {
   $ga->init([
     map {
       # [qw/ . * _ O L W \\ ! /, '#', 1..9, 'A'..'L'],
-      [qw/ . * _ O L W \\ /, '#'],
-      [qw/ . * _ O L W \\ /, '#'],
-      [qw/ . * _ O L W \\ /, '#'],
-      [qw/ . * _ O L W \\ /, '#'],
-      [qw/ . * _ O L W \\ /, '#'],
-      [qw/ . * _ O L W \\ /, '#'],
-      [qw/ . * _ O L W \\ /, '#'],
-      [qw/ . * _ O L W \\ /, '#'],
-      [qw/ U D L R W A /],
+      [qw/ ? . * O L W \\ /, '#', ' '],
+      [qw/ ? . * O L W \\ /, '#', ' '],
+      [qw/ ? . * O L W \\ /, '#', ' '],
+      [qw/ ? . * O L W \\ /, '#', ' '],
+      [qw/ ? . * O L W \\ /, '#', ' '],
+      [qw/ ? . * O L W \\ /, '#', ' '],
+      [qw/ ? . * O L W \\ /, '#', ' '],
+      [qw/ ? . * O L W \\ /, '#', ' '],
+      [qw/ U U D D L L R R W A /],
     } 1..20
   ]);
-  # $ga->evolve('rouletteTwoPoint', 1000);
-  # $ga->evolve('tournamentUniform', 50);
-  # $ga->evolve('tournamentTwoPoint', 1000);
-  $ga->evolve('tournamentSinglePoint', 50);
-  # $ga->evolve('randomUniform', 20);
-  # $ga->evolve('randomSinglePoint', 1000);
+
+  # if(-f 'store.g') {
+    # debug "Loading from store!\n";
+    # my $people = retrieve('store.g');
+    # $ga->inject(scalar @$people, @$people);
+  # }
+  # use Data::Printer;
+  # my $people = $ga->people();
+  # p $people;
+  # exit;
+  
+  # $ga->evolve('rouletteSinglePointFlip', 50);
+  # $ga->evolve('rouletteSinglePoint', 50);
+  # $ga->evolve('rouletteTwoPoint', 50);
+  $ga->evolve('tournamentUniform', 50);
+  # $ga->evolve('tournamentTwoPoint', 50);
+  # $ga->evolve('tournamentSinglePoint', 50);
+  # $ga->evolve('randomUniform', 50);
+  # $ga->evolve('randomSinglePoint', 50);
   my $best = $ga->getFittest;
   debug "\nBest score = " . $best->score . "\n";
   debug "Best genes = " . join('',$best->genes) . "\n";
@@ -149,6 +183,22 @@ sub print_pattern_geneome {
   }
 }
 
+sub compare_pattern {
+  my ($p1, $p2) = @_;
+  # distance($p1, $p2);
+  my @p1 = split //, $p1;
+  my @p2 = split //, $p2;
+  my $same = 0;
+  pairwise { $same++ if $a eq $b } @p1, @p2;
+
+  my %counts;
+  map { $counts{$_}++ } @p1;
+  map { $counts{$_}-- } @p2;
+  my $count = sum map { abs $_ } values %counts;
+
+  return (1 * $same) - (2 * $count);
+}
+
 sub test_pattern_moves {
   my $genes = shift;
   my $new_world = $world;
@@ -161,7 +211,8 @@ sub test_pattern_moves {
   }
 
   my $actual_moves = '';
-  for (1..20) {
+  my $actual_pattern_moves = '';
+  for (1..100) {
     my $m = $new_world->{map};
     my @pat;
     my ($x, $y) = @{ $new_world->{robot_loc} };
@@ -184,8 +235,8 @@ sub test_pattern_moves {
     # Go through each gene to see if we have a match
     my ($best_match, $best_distance);
     $best_distance = 100;
-    foreach my $p (keys %$gene_pat) {
-      my $d = distance($p,$pat);
+    foreach my $p (shuffle(keys %$gene_pat)) {
+      my $d = compare_pattern($p,$pat);
       if($d < $best_distance || !$best_match) {
         $best_match = $p;
         $best_distance = $d;
@@ -195,8 +246,8 @@ sub test_pattern_moves {
 
     my $move = $gene_pat->{$best_match};
     # print_pattern($best_match, $move);
-    # $actual_moves .= $move;
-    $actual_moves .= pattern_to_string($best_match, $move);
+    $actual_moves .= $move;
+    $actual_pattern_moves .= pattern_to_string($best_match, $move);
 
     $new_world = Lifter::robot_move($new_world, $move);
     $new_world = Lifter::check_ending($new_world);
@@ -205,18 +256,25 @@ sub test_pattern_moves {
     last if $new_world->{ending};
   }
 
-  if($new_world->{score} > $best_score) {
-    $best_score = $new_world->{score};
+  my $score = $new_world->{score};
+  if($score < 0) {
+    # $score = 0;
+    $score = $score / 10;
+  }
+  if($score > $best_score) {
+    $best_score = $score;
     $best_genes = [ @$genes ];
+    $best_pattern_moves = $actual_pattern_moves;
+    $best_moves = $actual_moves;
     debug "\n\nNew best score: $best_score\n";
-    debug "Moves:\n$actual_moves\n";
+    debug "Moves:\n$best_pattern_moves\n";
     debug "------- all patterns -------\n";
-    print_pattern_geneome($genes);
+    print_pattern_geneome($best_genes);
   } else {
-    debug $new_world->{score} . " ";
+    debug $score . " ";
   }
 
-  return $new_world->{score}; # - ($dist * 10);
+  return $score; # - ($dist * 10);
 }
 
 
@@ -255,4 +313,9 @@ sub test_pattern_moves {
   # return $count;
 # }
 
+sub my_eval {
+  my $retval = eval @_;
+  print STDERR $@ if $@;
+  return $retval;
+}
 

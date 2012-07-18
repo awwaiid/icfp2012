@@ -18,6 +18,14 @@ sub rouletteSinglePoint {
   goto &genericStrategy;
 }
 
+sub rouletteSinglePointFlip {
+  # initialize the roulette wheel
+  AI::Genetic::OpSelection::initWheel($_[0]->people);
+
+  push @_ => 'vectorSinglePointFlip', 'rouletteUnique';
+  goto &genericStrategy;
+}
+
 sub rouletteTwoPoint {
   # initialize the roulette wheel
   AI::Genetic::OpSelection::initWheel($_[0]->people);
@@ -51,6 +59,11 @@ sub tournamentUniform {
 
 sub randomSinglePoint {
     push @_ => 'vectorSinglePoint', 'random', [$_[0]->people];
+  goto &genericStrategy;
+}
+
+sub randomSinglePointFlip {
+    push @_ => 'vectorSinglePointFlip', 'random', [$_[0]->people];
   goto &genericStrategy;
 }
 

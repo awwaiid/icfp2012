@@ -29,6 +29,24 @@ sub vectorSinglePoint {
   return (\@c1, \@c2);
 }
 
+sub vectorSinglePointFlip {
+  my ($prob, $mom, $dad) = @_;
+
+  return 0 if rand > $prob;
+
+  # get single index from 1 to $#{$dad}
+  my $ind = 1 + int rand $#{$dad};
+
+  my @c1 = (@$mom[0 .. $ind - 1],
+	    @$dad[$ind .. $#{$dad}]);
+  my @c2 = (
+	  @$mom[$ind .. $#{$dad}],
+    @$dad[0 .. $ind - 1],
+    );
+
+  return (\@c1, \@c2);
+}
+
 # sub vectorTwoPoint():
 # Two point crossover.
 # arguments are crossover prob, two
